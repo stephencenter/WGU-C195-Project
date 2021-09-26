@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Database {
-    private static final String db_url = "jdbc:mysql://wgudb.ucertify.com:3306/";
-    private static final String db_name = "client_schedule"
+    private static final String db_url = "jdbc:mysql://localhost:3306/";
+    private static final String db_name = "client_schedule";
     private static final String db_username = "sqlUser";
     private static final String db_password = "Passw0rd!";
     private static Connection db_connection;
@@ -22,7 +22,7 @@ public class Database {
     private static Appointment appointment_to_edit = null;
 
     public static void ConnectToDatabase() throws SQLException {
-        db_connection = DriverManager.getConnection(db_url, db_username, db_password);
+        db_connection = DriverManager.getConnection(db_url + db_name, db_username, db_password);
     }
 
     public static User GetUserWithLoginInfo(String username, String password) throws SQLException, ParseException {

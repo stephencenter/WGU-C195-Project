@@ -48,15 +48,15 @@ public class AddCustomerController {
         }
 
         if (chosen_country.equals("Canada")) {
-            region_combo.setItems(Database.GetDivisionList(38));
+            region_combo.setItems(Database.GetDivisionList(3));
         }
 
         if (chosen_country.equals("United Kingdom")) {
-            region_combo.setItems(Database.GetDivisionList(230));
+            region_combo.setItems(Database.GetDivisionList(2));
         }
 
         if (chosen_country.equals("United States")) {
-            region_combo.setItems(Database.GetDivisionList(231));
+            region_combo.setItems(Database.GetDivisionList(1));
         }
 
         Callback<ListView<Division>, ListCell<Division>> cell_factory = new Callback<>() {
