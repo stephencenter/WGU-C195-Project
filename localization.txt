@@ -1,0 +1,41 @@
+[key]
+title_label
+[english]
+Log in to Database
+[french]
+Connectez-vous à la base de données
+
+[key]
+username_label
+[english]
+Username
+[french]
+Nom d'utilisateur
+
+[key]
+password_label
+[english]
+Password
+[french]
+Mot de passe
+
+[key]
+login_button
+[english]
+Login
+[french]
+Connexion
+
+[key]
+error_label
+[english]
+Invalid username or password!
+[french]
+Nom d'utilisateur ou mot de passe invalide!
+
+[key]
+timezone_label
+[english]
+Your timezone:
+[french]
+Votre fuseau horaire:
