@@ -120,6 +120,20 @@ public class Database {
         return part_1 + part_2 + part_3;
     }
 
+    public static String FormatUpdateValues(String table, String primary_key_name, int primary_key_value, List<String> columns, List<String> values) {
+        String part_1 = "UPDATE " + table + " SET ";
+        StringBuilder part_2 = new StringBuilder();
+        for (int i = 0; i < columns.size(); i++) {
+            part_2.append(String.format("%s='%s'", columns.get(i), values.get(i)));
+            if (i < columns.size() - 1) {
+                part_2.append(", ");
+            }
+        }
+        String part_3 = " WHERE " + primary_key_name + " = " + primary_key_value;
+
+        return part_1 + part_2 + part_3;
+    }
+
     public static Timestamp ParseDate(String date_string) throws ParseException {
         java.util.Date util_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date_string);
         return new Timestamp(util_date.getTime());
@@ -155,6 +169,19 @@ public class Database {
 
         PreparedStatement new_customer_prepared = db_connection.prepareStatement(new_customer_statement);
         new_customer_prepared.executeUpdate();
+    }
+
+    public static void UpdateExistingCustomer(String name, String address, String zipcode, String phonenum, Division division, int customer_id) throws SQLException {
+        String current_date = new Timestamp(new java.util.Date().getTime()).toString();
+        String c_username = current_user.getUsername();
+        String division_id = String.valueOf(division.getId());
+
+        List<String> columns = Arrays.asList("Customer_Name", "Address", "Postal_Code", "Phone", "Last_Update", "Last_Updated_By", "Division_ID");
+        List<String> values = Arrays.asList(name, address, zipcode, phonenum, current_date, c_username, division_id);
+        String update_customer_statement = FormatUpdateValues("customers", "Customer_ID", customer_id, columns, values);
+
+        PreparedStatement update_customer_prepared = db_connection.prepareStatement(update_customer_statement);
+        update_customer_prepared.executeUpdate();
     }
 
     public static void AddAppointmentToDatabase(String title, String desc, String location, String type, String start_time, String end_time, Customer customer, Contact contact) throws SQLException {

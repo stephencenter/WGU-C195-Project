@@ -9,7 +9,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="455.0" prefWidth="494.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduler.AddCustomerController">
    <children>
-      <Label layoutX="22.0" layoutY="25.0" text="Add a New Customer">
+      <Label fx:id="add_or_modify_label" layoutX="22.0" layoutY="25.0" text="Add a New Customer">
          <font>
             <Font size="22.0" />
          </font>

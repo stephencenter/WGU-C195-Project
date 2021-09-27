@@ -1,7 +1,6 @@
 package scheduler;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AddCustomerController {
+    @FXML Label add_or_modify_label;
     @FXML TextField name_field;
     @FXML TextField address_field;
     @FXML TextField zipcode_field;
@@ -55,6 +55,7 @@ public class AddCustomerController {
         if (customer_to_edit == null) {
             return;
         }
+        add_or_modify_label.setText("Modify an existing customer");
 
         name_field.setText(customer_to_edit.getName());
         address_field.setText(customer_to_edit.getAddress());
@@ -70,9 +71,18 @@ public class AddCustomerController {
                 country_combo.getSelectionModel().select(i);
             }
         }
+
+        UpdateRegionList();
+
+        for (int i = 0; i < region_combo.getItems().size(); i++) {
+            if (region_combo.getItems().get(i).getId() == customer_to_edit.getDivisionId()) {
+                region_combo.getSelectionModel().select(i);
+            }
+        }
     }
 
     public void UpdateRegionList() throws SQLException, ParseException {
+        System.out.println("yo");
         Country chosen_country = country_combo.getValue();
         if (chosen_country == null) {
             region_combo.setItems(null);
@@ -145,7 +155,12 @@ public class AddCustomerController {
         }
 
         error_label.setVisible(false);
-        Database.AddCustomerToDatabase(name, address, zipcode, phonenum, division);
+        if (customer_to_edit == null) {
+            Database.AddCustomerToDatabase(name, address, zipcode, phonenum, division);
+        }
+        else {
+            Database.UpdateExistingCustomer(name, address, zipcode, phonenum, division, customer_to_edit.getId());
+        }
         ReturnToCustomerTableForm(event);
     }
 
