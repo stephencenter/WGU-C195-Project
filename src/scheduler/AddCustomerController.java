@@ -1,6 +1,7 @@
 package scheduler;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,32 +15,65 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AddCustomerController {
     @FXML TextField name_field;
     @FXML TextField address_field;
     @FXML TextField zipcode_field;
     @FXML TextField phonenum_field;
-    @FXML ComboBox<String> country_combo;
+    @FXML ComboBox<Country> country_combo;
     @FXML ComboBox<Division> region_combo;
     @FXML Label error_label;
 
     private Customer customer_to_edit;
 
-    public void initialize() {
-        country_combo.setItems(FXCollections.observableArrayList("Canada", "United Kingdom", "United States"));
+    public void initialize() throws SQLException, ParseException {
+        country_combo.setItems(Database.GetCountryList());
+
+        Callback<ListView<Country>, ListCell<Country>> cell_factory = new Callback<>() {
+            @Override
+            public ListCell<Country> call(ListView<Country> l) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(Country item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.getCountry());
+                        }
+                    }
+                };
+            }
+        };
+        country_combo.setButtonCell(cell_factory.call(null));
+        country_combo.setCellFactory(cell_factory);
 
         customer_to_edit = Database.RetrieveCustomerAndClear();
         if (customer_to_edit == null) {
-            System.out.println("No customer was selected");
+            return;
         }
-        else {
-            System.out.println(customer_to_edit.getName() + " was selected");
+
+        name_field.setText(customer_to_edit.getName());
+        address_field.setText(customer_to_edit.getAddress());
+        zipcode_field.setText(customer_to_edit.getZipcode());
+        phonenum_field.setText(customer_to_edit.getPhoneNum());
+
+        Country the_country = Database.GetCountryWithDivisionID(customer_to_edit.getDivisionId());
+        if (the_country == null) {
+            return;
+        }
+        for (int i = 0; i < country_combo.getItems().size(); i++) {
+            if (country_combo.getItems().get(i).getId() == the_country.getId()) {
+                country_combo.getSelectionModel().select(i);
+            }
         }
     }
 
     public void UpdateRegionList() throws SQLException, ParseException {
-        String chosen_country = country_combo.getValue();
+        Country chosen_country = country_combo.getValue();
         if (chosen_country == null) {
             region_combo.setItems(null);
             region_combo.setValue(null);
@@ -47,24 +81,13 @@ public class AddCustomerController {
             return;
         }
 
-        if (chosen_country.equals("Canada")) {
-            region_combo.setItems(Database.GetDivisionList(3));
-        }
-
-        if (chosen_country.equals("United Kingdom")) {
-            region_combo.setItems(Database.GetDivisionList(2));
-        }
-
-        if (chosen_country.equals("United States")) {
-            region_combo.setItems(Database.GetDivisionList(1));
-        }
+        Stream<Division> division_stream = Database.GetDivisionList().stream().filter(c -> c.getCountryId() == chosen_country.getId());
+        region_combo.setItems(division_stream.collect(Collectors.toCollection(FXCollections::observableArrayList)));
 
         Callback<ListView<Division>, ListCell<Division>> cell_factory = new Callback<>() {
-
             @Override
             public ListCell<Division> call(ListView<Division> l) {
                 return new ListCell<>() {
-
                     @Override
                     protected void updateItem(Division item, boolean empty) {
                         super.updateItem(item, empty);

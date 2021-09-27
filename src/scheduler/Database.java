@@ -47,8 +47,8 @@ public class Database {
         return customer_list;
     }
 
-    public static ObservableList<Division> GetDivisionList(int country_id) throws SQLException, ParseException {
-        List<List<String>> division_data = GetResultsFromQuery("SELECT * FROM first_level_divisions WHERE COUNTRY_ID=" + country_id);
+    public static ObservableList<Division> GetDivisionList() throws SQLException, ParseException {
+        List<List<String>> division_data = GetResultsFromQuery("SELECT * FROM first_level_divisions");
         List<Division> division_list = new ArrayList<>();
 
         for (List<String> val : division_data) {
@@ -56,6 +56,17 @@ public class Database {
         }
 
         return FXCollections.observableList(division_list);
+    }
+
+    public static ObservableList<Country> GetCountryList() throws SQLException, ParseException {
+        List<List<String>> country_data = GetResultsFromQuery("SELECT * FROM countries");
+        List<Country> country_list = new ArrayList<>();
+
+        for (List<String> val : country_data) {
+            country_list.add(new Country(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5)));
+        }
+
+        return FXCollections.observableList(country_list);
     }
 
     public static ObservableList<Contact> GetContactList() throws SQLException {
@@ -78,6 +89,23 @@ public class Database {
         }
 
         return FXCollections.observableList(appointment_list);
+    }
+
+    public static Country GetCountryWithDivisionID(int division_id) throws SQLException, ParseException {
+        int country_id = 0;
+        for (Division division : GetDivisionList()) {
+            if (division.getId() == division_id) {
+                country_id = division.getCountryId();
+                break;
+            }
+        }
+
+        for (Country country : GetCountryList()) {
+            if (country.getId() == country_id) {
+                return country;
+            }
+        }
+        return null;
     }
 
     public static void SetCurrentUser(User new_user) {
