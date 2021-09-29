@@ -1,6 +1,5 @@
 package scheduler;
 
-import com.sun.scenario.effect.Merge;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,7 +28,7 @@ public class AddAppointmentController {
     @FXML ComboBox<Contact> contact_box;
     @FXML Label error_label;
 
-    public void initialize() throws SQLException, ParseException {
+    public void initialize() throws SQLException {
         // Set hour combobox lists
         ObservableList<String> hour_list = FXCollections.observableArrayList("12", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11");
 
@@ -135,42 +134,61 @@ public class AddAppointmentController {
         error_label.setVisible(true);
 
         if (title.isBlank()) {
-            error_label.setText("Title cannot be blank!");
+            error_label.setText("Title cannot be blank");
             return;
         }
 
         if (desc.isBlank()) {
-            error_label.setText("Description cannot be blank!");
+            error_label.setText("Description cannot be blank");
             return;
         }
 
         if (location.isBlank()) {
-            error_label.setText("Location cannot be blank!");
+            error_label.setText("Location cannot be blank");
             return;
         }
 
         if (type.isBlank()) {
-            error_label.setText("Appointment Type cannot be blank!");
+            error_label.setText("Appointment Type cannot be blank");
             return;
         }
 
         if (start_date == null || start_hour == null || start_minute == null || start_ampm == null) {
-            error_label.setText("Start date and time must be completely filled out!");
+            error_label.setText("Start date and time must be completely filled out");
             return;
         }
 
         if (end_date == null || end_hour == null || end_minute == null || end_ampm == null) {
-            error_label.setText("End date and time must be completely filled out!");
+            error_label.setText("End date and time must be completely filled out");
             return;
         }
 
         if (customer == null) {
-            error_label.setText("A customer must be selected!");
+            error_label.setText("A customer must be selected");
             return;
         }
 
         if (contact == null) {
-            error_label.setText("A contact must be selected!");
+            error_label.setText("A contact must be selected");
+            return;
+        }
+
+        if (title.length() > 50) {
+            error_label.setText("Title cannot be longer than 50 characters");
+            return;
+        }
+
+        if (desc.length() > 50) {
+            error_label.setText("Description cannot be longer than 50 characters");
+            return;
+        }
+
+        if (location.length() > 50) {
+            error_label.setText("Location cannot be longer than 50 characters");
+        }
+
+        if (type.length() > 50) {
+            error_label.setText("Type cannot be longer than 50 characters");
             return;
         }
 

@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,11 +31,20 @@ public class CustomerTableController {
 
     private boolean customer_confirm_delete = false;
 
-    public void initialize() throws SQLException, ParseException {
+    /**
+     * This method is called when the CustomerTableForm loads.
+     * It is responsible for creating and populating the customer table
+     * @throws SQLException Populating the table can potentially throw an exception when querying the database
+     */
+    public void initialize() throws SQLException {
         CreateCustomerTable();
         PopulateCustomerTable();
     }
 
+    /**
+     * This method creates the columns for the customer table, including
+     * headers and the functions that cell data will be retrieved with
+     */
     public void CreateCustomerTable() {
         TableColumn<Customer, Integer> id_column = new TableColumn<>("ID");
         id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -42,27 +52,35 @@ public class CustomerTableController {
         TableColumn<Customer, String> name_column = new TableColumn<>("Name");
         name_column.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Customer, Double> price_column = new TableColumn<>("Address");
-        price_column.setCellValueFactory(new PropertyValueFactory<>("address"));
+        TableColumn<Customer, String> address_column = new TableColumn<>("Address");
+        address_column.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-        TableColumn<Customer, Integer> stock_column = new TableColumn<>("Zipcode");
-        stock_column.setCellValueFactory(new PropertyValueFactory<>("zipcode"));
+        TableColumn<Customer, String> zipcode_column = new TableColumn<>("Zipcode");
+        zipcode_column.setCellValueFactory(new PropertyValueFactory<>("zipcode"));
 
-        TableColumn<Customer, Integer> minstock_column = new TableColumn<>("Phone #");
-        minstock_column.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
+        TableColumn<Customer, String> phonenum_column = new TableColumn<>("Phone #");
+        phonenum_column.setCellValueFactory(new PropertyValueFactory<>("phoneNum"));
 
-        TableColumn<Customer, Integer> maxstock_column = new TableColumn<>("Division");
-        maxstock_column.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
+        TableColumn<Customer, String> country_column = new TableColumn<>("Country");
+        country_column.setCellValueFactory(new PropertyValueFactory<>("countryName"));
+
+        TableColumn<Customer, String> division_column = new TableColumn<>("Division");
+        division_column.setCellValueFactory(new PropertyValueFactory<>("divisionName"));
 
         customer_table.getColumns().add(id_column);
         customer_table.getColumns().add(name_column);
-        customer_table.getColumns().add(price_column);
-        customer_table.getColumns().add(stock_column);
-        customer_table.getColumns().add(minstock_column);
-        customer_table.getColumns().add(maxstock_column);
+        customer_table.getColumns().add(address_column);
+        customer_table.getColumns().add(phonenum_column);
+        customer_table.getColumns().add(country_column);
+        customer_table.getColumns().add(division_column);
     }
 
-    public void PopulateCustomerTable() throws SQLException, ParseException {
+    /**
+     * This method queries the database for a list of all customers and then inserts them into our
+     * Customer table
+     * @throws SQLException Querying the database could cause an exception
+     */
+    public void PopulateCustomerTable() throws SQLException {
         String search_string = customer_searchbar.getText().toLowerCase();
         ObservableList<Customer> customer_list = Database.GetCustomerList();
 
@@ -100,13 +118,16 @@ public class CustomerTableController {
             return;
         }
 
-        if (Database.DoesCustomerHaveAppointments(selected_customer.getId())) {
+        if (selected_customer.HasAppointments()) {
             customer_confirm_delete = false;
             customer_delete_message.setText("Can't delete customer with appointments set");
             customer_delete_message.setTextFill(Color.web("#FF0000"));
             return;
         }
 
+        // If the user has already clicked the delete button once before, then we delete the customer.
+        // Otherwise, we set a flag that indicates they've now clicked the button once, and the
+        // next click should delete the customer
         if (!customer_confirm_delete) {
             customer_confirm_delete = true;
             customer_delete_message.setText("Click again to confirm customer deletion");
@@ -128,28 +149,53 @@ public class CustomerTableController {
         PopulateCustomerTable();
     }
 
+    /**
+     * This method is called when hitting the add button. It switches the current form
+     * to the AddCustomerForm so the user can add a new customer to the database
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
     public void SwitchToAddCustomerForm(Event event) throws IOException {
-        Parent add_customer_form = FXMLLoader.load(getClass().getResource("AddCustomerForm.fxml"));
+        Parent add_customer_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddCustomerForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(add_customer_form);
         the_stage.setScene(the_scene);
         the_stage.show();
     }
 
+    /**
+     * This method is called when hitting the log out button. It sets the current user to null
+     * and then switches back to the login screen so the user can login as a different user
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
     public void Logout(Event event) throws IOException {
         Database.SetCurrentUser(null);
-        Parent login_form= FXMLLoader.load(getClass().getResource("LoginForm.fxml"));
+        Parent login_form= FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(login_form);
         the_stage.setScene(the_scene);
         the_stage.show();
     }
 
+    /**
+     * This method is called when clicking off the current customer to a different one.
+     * Deleting a customer requires clicking the delete button twice to prevent accidental deletions.
+     * The code in this method resets this two-click requirement
+     */
     public void ResetCustomerDeleteStatus() {
         customer_delete_message.setVisible(false);
         customer_confirm_delete = false;
     }
 
+    /**
+     * This method is called when the modify button is pressed. It switches the current form
+     * to the AddCustomerForm with a flag set that tells the form to pre-fill out the textfields and
+     * comboboxes with the selected customer's information. It also tells the form to update the customer
+     * in the database instead of creating a new customer
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
     public void SwitchToModifyCustomerForm(Event event) throws IOException {
         Customer selected_customer = customer_table.getSelectionModel().getSelectedItem();
         customer_delete_message.setVisible(true);

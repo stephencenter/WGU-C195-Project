@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.*;
 
 public class LoginController {
@@ -29,7 +28,7 @@ public class LoginController {
     @FXML Label error_label;
     @FXML Label timezone_label;
 
-    public void initialize() throws SQLException {
+    public void initialize() {
         Map<String, Map<String, String>> localization = ParseLocalization();
         Locale locale = Locale.getDefault();
         String user_language = locale.getLanguage();
@@ -92,7 +91,7 @@ public class LoginController {
         return localization;
     }
 
-    public void PressLoginButton(Event event) throws SQLException, ParseException, IOException {
+    public void PressLoginButton(Event event) throws SQLException, IOException {
         String username = username_field.getText();
         String password = password_field.getText();
         User the_user = Database.GetUserWithLoginInfo(username, password);
@@ -103,7 +102,7 @@ public class LoginController {
         }
 
         Database.SetCurrentUser(the_user);
-        Parent modify_products_scene = FXMLLoader.load(getClass().getResource("CustomerTableForm.fxml"));
+        Parent modify_products_scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(modify_products_scene);
         the_stage.setScene(the_scene);

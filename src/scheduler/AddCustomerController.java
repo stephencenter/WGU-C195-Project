@@ -13,7 +13,7 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +29,7 @@ public class AddCustomerController {
 
     private Customer customer_to_edit;
 
-    public void initialize() throws SQLException, ParseException {
+    public void initialize() throws SQLException {
         country_combo.setItems(Database.GetCountryList());
 
         Callback<ListView<Country>, ListCell<Country>> cell_factory = new Callback<>() {
@@ -42,7 +42,7 @@ public class AddCustomerController {
                         if (item == null || empty) {
                             setGraphic(null);
                         } else {
-                            setText(item.getCountry());
+                            setText(item.getName());
                         }
                     }
                 };
@@ -62,7 +62,7 @@ public class AddCustomerController {
         zipcode_field.setText(customer_to_edit.getZipcode());
         phonenum_field.setText(customer_to_edit.getPhoneNum());
 
-        Country the_country = Database.GetCountryWithDivisionID(customer_to_edit.getDivisionId());
+        Country the_country = customer_to_edit.GetCountry();
         if (the_country == null) {
             return;
         }
@@ -81,8 +81,7 @@ public class AddCustomerController {
         }
     }
 
-    public void UpdateRegionList() throws SQLException, ParseException {
-        System.out.println("yo");
+    public void UpdateRegionList() throws SQLException {
         Country chosen_country = country_combo.getValue();
         if (chosen_country == null) {
             region_combo.setItems(null);
@@ -104,7 +103,7 @@ public class AddCustomerController {
                         if (item == null || empty) {
                             setGraphic(null);
                         } else {
-                            setText(item.getDivision());
+                            setText(item.getName());
                         }
                     }
                 };
@@ -124,37 +123,54 @@ public class AddCustomerController {
         String phonenum = phonenum_field.getText();
         Division division = region_combo.getValue();
 
+        error_label.setVisible(true);
         if (name.isBlank()) {
-            error_label.setVisible(true);
-            error_label.setText("Name cannot be blank!");
+            error_label.setText("Name cannot be blank");
             return;
         }
 
         if (address.isBlank()) {
-            error_label.setVisible(true);
-            error_label.setText("Address cannot be blank!");
+            error_label.setText("Address cannot be blank");
             return;
         }
 
         if (zipcode.isBlank()) {
-            error_label.setVisible(true);
-            error_label.setText("Zipcode cannot be blank!");
+            error_label.setText("Zipcode cannot be blank");
             return;
         }
 
         if (phonenum.isBlank()) {
-            error_label.setVisible(true);
-            error_label.setText("Phone Number cannot be blank!");
+            error_label.setText("Phone Number cannot be blank");
             return;
         }
 
         if (division == null) {
-            error_label.setVisible(true);
-            error_label.setText("Country and region cannot be blank!");
+            error_label.setText("Both a country and a region must be selected");
+            return;
+        }
+
+        if (name.length() > 50) {
+            error_label.setText("Name cannot be longer than 50 characters");
+            return;
+        }
+
+        if (address.length() > 100) {
+            error_label.setText("Address cannot be longer than 100 characters");
+            return;
+        }
+
+        if (zipcode.length() > 50) {
+            error_label.setText("Zipcode cannot be longer than 50 characters");
+            return;
+        }
+
+        if (phonenum.length() > 50) {
+            error_label.setText("Phone number cannot be longer than 50 characters");
             return;
         }
 
         error_label.setVisible(false);
+
         if (customer_to_edit == null) {
             Database.AddCustomerToDatabase(name, address, zipcode, phonenum, division);
         }
@@ -165,7 +181,7 @@ public class AddCustomerController {
     }
 
     public void ReturnToCustomerTableForm(Event event) throws IOException {
-        Parent customer_table_form = FXMLLoader.load(getClass().getResource("CustomerTableForm.fxml"));
+        Parent customer_table_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(customer_table_form);
         the_stage.setScene(the_scene);

@@ -25,45 +25,45 @@ public class Database {
         db_connection = DriverManager.getConnection(db_url + db_name, db_username, db_password);
     }
 
-    public static User GetUserWithLoginInfo(String username, String password) throws SQLException, ParseException {
-        List<List<String>> user_data = GetResultsFromQuery("SELECT * FROM users WHERE User_Name='" + username + "' AND Password='" + password + "'");
+    public static User GetUserWithLoginInfo(String username, String password) throws SQLException {
+        List<List<String>> user_data = GetResultsFromQuery("SELECT User_ID, User_Name, Password FROM users WHERE User_Name='" + username + "' AND Password='" + password + "'");
 
         if (user_data.size() == 0) {
             return null;
         }
 
         List<String> val = user_data.get(0);
-        return new User(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5), val.get(6));
+        return new User(val.get(0), val.get(1), val.get(2));
     }
 
-    public static ObservableList<Customer> GetCustomerList() throws SQLException, ParseException {
-        List<List<String>> customer_data = GetResultsFromQuery("SELECT * FROM customers");
+    public static ObservableList<Customer> GetCustomerList() throws SQLException {
+        List<List<String>> customer_data = GetResultsFromQuery("SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, Division_ID FROM customers");
         ObservableList<Customer> customer_list = FXCollections.observableArrayList();
 
         for (List<String> val : customer_data) {
-            customer_list.add(new Customer(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5), val.get(6), val.get(7), val.get(8), val.get(9)));
+            customer_list.add(new Customer(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5)));
         }
 
         return customer_list;
     }
 
-    public static ObservableList<Division> GetDivisionList() throws SQLException, ParseException {
-        List<List<String>> division_data = GetResultsFromQuery("SELECT * FROM first_level_divisions");
+    public static ObservableList<Division> GetDivisionList() throws SQLException {
+        List<List<String>> division_data = GetResultsFromQuery("SELECT Division_ID, Division, Country_ID FROM first_level_divisions");
         List<Division> division_list = new ArrayList<>();
 
         for (List<String> val : division_data) {
-            division_list.add(new Division(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5), val.get(6)));
+            division_list.add(new Division(val.get(0), val.get(1), val.get(2)));
         }
 
         return FXCollections.observableList(division_list);
     }
 
-    public static ObservableList<Country> GetCountryList() throws SQLException, ParseException {
-        List<List<String>> country_data = GetResultsFromQuery("SELECT * FROM countries");
+    public static ObservableList<Country> GetCountryList() throws SQLException {
+        List<List<String>> country_data = GetResultsFromQuery("SELECT Country_ID, Country FROM countries");
         List<Country> country_list = new ArrayList<>();
 
         for (List<String> val : country_data) {
-            country_list.add(new Country(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5)));
+            country_list.add(new Country(val.get(0), val.get(1)));
         }
 
         return FXCollections.observableList(country_list);
@@ -81,31 +81,14 @@ public class Database {
     }
 
     public static ObservableList<Appointment> GetAppointmentList() throws SQLException, ParseException {
-        List<List<String>> appointment_data = GetResultsFromQuery("SELECT * FROM appointments");
+        List<List<String>> appointment_data = GetResultsFromQuery("SELECT Appointment_ID, Title, Description, Location, Type, Start, End, Customer_ID, User_ID, Contact_ID FROM appointments");
         List<Appointment> appointment_list = new ArrayList<>();
 
         for (List<String> val : appointment_data) {
-            appointment_list.add(new Appointment(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5), val.get(6), val.get(7), val.get(8), val.get(9), val.get(10), val.get(11), val.get(12), val.get(13)));
+            appointment_list.add(new Appointment(val.get(0), val.get(1), val.get(2), val.get(3), val.get(4), val.get(5), val.get(6), val.get(7), val.get(8), val.get(9)));
         }
 
         return FXCollections.observableList(appointment_list);
-    }
-
-    public static Country GetCountryWithDivisionID(int division_id) throws SQLException, ParseException {
-        int country_id = 0;
-        for (Division division : GetDivisionList()) {
-            if (division.getId() == division_id) {
-                country_id = division.getCountryId();
-                break;
-            }
-        }
-
-        for (Country country : GetCountryList()) {
-            if (country.getId() == country_id) {
-                return country;
-            }
-        }
-        return null;
     }
 
     public static void SetCurrentUser(User new_user) {
@@ -197,18 +180,6 @@ public class Database {
 
         PreparedStatement new_appointment_prepared = db_connection.prepareStatement(new_appointment_statement);
         new_appointment_prepared.executeUpdate();
-    }
-
-    public static boolean DoesCustomerHaveAppointments(int id) throws SQLException, ParseException {
-        ObservableList<Appointment> appointment_list = GetAppointmentList();
-
-        for (Appointment appt : appointment_list) {
-            if (appt.getCustomerId() == id) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public static boolean DeleteCustomerWithID(int id) {
