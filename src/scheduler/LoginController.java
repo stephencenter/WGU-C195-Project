@@ -102,7 +102,7 @@ public class LoginController {
         }
 
         Database.SetCurrentUser(the_user);
-        Parent modify_products_scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
+        Parent modify_products_scene = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(modify_products_scene);
         the_stage.setScene(the_scene);

@@ -6,8 +6,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.Pane?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduler.AppointmentTableController">
    <children>
       <Button layoutX="21.0" layoutY="555.0" mnemonicParsing="false" text="View Customers" />
       <Button layoutX="21.0" layoutY="509.0" mnemonicParsing="false" text="Add" />
@@ -15,11 +14,11 @@
       <Button layoutX="168.0" layoutY="509.0" mnemonicParsing="false" text="Delete" />
       <Button layoutX="168.0" layoutY="555.0" mnemonicParsing="false" text="Logout" />
       <Label layoutX="33.0" layoutY="35.0" text="List of Appointments" />
-      <Label layoutX="412.0" layoutY="534.0" text="Status label" />
-      <TableView layoutX="61.0" layoutY="125.0" prefHeight="304.0" prefWidth="653.0" />
-      <RadioButton layoutX="600.0" layoutY="35.0" mnemonicParsing="false" text="All Appointments" />
-      <RadioButton layoutX="600.0" layoutY="63.0" mnemonicParsing="false" text="Next 30 days" />
-      <RadioButton layoutX="600.0" layoutY="89.0" mnemonicParsing="false" text="Next 7 days" />
+      <Label fx:id="appointment_delete_message" layoutX="412.0" layoutY="534.0" text="Status label" />
+      <TableView fx:id="appointment_table" layoutX="61.0" layoutY="125.0" prefHeight="304.0" prefWidth="653.0" />
+      <RadioButton fx:id="unfiltered_radio" layoutX="600.0" layoutY="35.0" mnemonicParsing="false" text="All Appointments" />
+      <RadioButton fx:id="month_radio" layoutX="600.0" layoutY="63.0" mnemonicParsing="false" text="Current Month" />
+      <RadioButton fx:id="week_radio" layoutX="600.0" layoutY="89.0" mnemonicParsing="false" text="Current Week" />
       <Label layoutX="57.0" layoutY="80.0" text="Appointment alert label" />
    </children>
 </Pane>

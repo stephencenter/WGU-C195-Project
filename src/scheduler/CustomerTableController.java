@@ -156,9 +156,9 @@ public class CustomerTableController {
      * @throws IOException Attempting to laod the new form could raise an IOException
      */
     public void SwitchToAddCustomerForm(Event event) throws IOException {
-        Parent add_customer_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddCustomerForm.fxml")));
+        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddCustomerForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(add_customer_form);
+        Scene the_scene = new Scene(the_form);
         the_stage.setScene(the_scene);
         the_stage.show();
     }
@@ -171,9 +171,9 @@ public class CustomerTableController {
      */
     public void Logout(Event event) throws IOException {
         Database.SetCurrentUser(null);
-        Parent login_form= FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginForm.fxml")));
+        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(login_form);
+        Scene the_scene = new Scene(the_form);
         the_stage.setScene(the_scene);
         the_stage.show();
     }
@@ -208,5 +208,14 @@ public class CustomerTableController {
 
         Database.SetCustomerForEditing(selected_customer);
         SwitchToAddCustomerForm(event);
+    }
+
+    public void SwitchToAppointmentForm(Event event) throws IOException {
+        Database.SetCurrentUser(null);
+        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
+        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene the_scene = new Scene(the_form);
+        the_stage.setScene(the_scene);
+        the_stage.show();
     }
 }

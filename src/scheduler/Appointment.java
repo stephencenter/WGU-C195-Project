@@ -1,5 +1,6 @@
 package scheduler;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 
@@ -38,6 +39,14 @@ public class Appointment {
     public Timestamp getEndTime() { return end_time; }
     public int getCustomerId() { return customer_id; }
     public int getUserId() { return user_id; }
-    public int getContactId() { return contact_id; }
 
+    public String getContactName() throws SQLException {
+        var contact_list = Database.GetContactList();
+        for (Contact contact : contact_list) {
+            if (contact.getId() == contact_id) {
+                return contact.getName();
+            }
+        }
+        return null;
+    }
 }
