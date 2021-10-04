@@ -47,7 +47,7 @@
             <Font size="28.0" />
          </font>
       </Label>
-      <Button layoutX="139.0" layoutY="487.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="92.0" text="Cancel">
+      <Button layoutX="139.0" layoutY="487.0" mnemonicParsing="false" onAction="#ReturnToAppointmentTableForm" prefHeight="47.0" prefWidth="92.0" text="Cancel">
          <font>
             <Font size="18.0" />
          </font>

@@ -2,14 +2,22 @@ package scheduler;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class AddAppointmentController {
     @FXML TextField title_field;
@@ -115,7 +123,7 @@ public class AddAppointmentController {
         return date + " " + hour + ":" + minute + ":00";
     }
 
-    public void SaveAppointmentInfo() throws ParseException, SQLException {
+    public void SaveAppointmentInfo(Event event) throws ParseException, SQLException, IOException {
         String title = title_field.getText();
         String desc = description_field.getText();
         String location = location_field.getText();
@@ -210,7 +218,16 @@ public class AddAppointmentController {
         }
 
         error_label.setVisible(false);
-
         Database.AddAppointmentToDatabase(title, desc, location, type, start_time, end_time, customer, contact);
+        ReturnToAppointmentTableForm(event);
+    }
+
+
+    public void ReturnToAppointmentTableForm(Event event) throws IOException {
+        Parent customer_table_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
+        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene the_scene = new Scene(customer_table_form);
+        the_stage.setScene(the_scene);
+        the_stage.show();
     }
 }

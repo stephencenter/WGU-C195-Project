@@ -12,6 +12,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class AppointmentTableController {
     @FXML RadioButton unfiltered_radio;
     @FXML RadioButton month_radio;
     @FXML RadioButton week_radio;
+    boolean appointment_confirm_delete = false;
 
     public void initialize() throws SQLException, ParseException {
         CreateAppointmentTable();
@@ -78,9 +80,6 @@ public class AppointmentTableController {
         ObservableList<Appointment> appointment_list = Database.GetAppointmentList();
         appointment_table.setItems(appointment_list);
         appointment_table.setPlaceholder(new Label("Database has no appointments"));
-        for (Appointment appt : appointment_list) {
-            System.out.println(appt.getTitle());
-        }
     }
 
     public void Logout(Event event) throws IOException {
@@ -90,5 +89,58 @@ public class AppointmentTableController {
         Scene the_scene = new Scene(the_form);
         the_stage.setScene(the_scene);
         the_stage.show();
+    }
+
+    public void DeleteSelectedAppointment() throws SQLException, ParseException {
+        Appointment selected_appointment = appointment_table.getSelectionModel().getSelectedItem();
+        appointment_delete_message.setVisible(true);
+
+        if (selected_appointment == null) {
+            appointment_delete_message.setText("Select an appointment first");
+            appointment_delete_message.setTextFill(Color.web("#FF0000"));
+            return;
+        }
+
+        if (!appointment_confirm_delete) {
+            appointment_confirm_delete = true;
+            appointment_delete_message.setText("Click again to confirm appointment deletion");
+            appointment_delete_message.setTextFill(Color.web("#000000"));
+            return;
+        }
+
+        if (Database.DeleteCustomerWithID(selected_appointment.getId())) {
+            appointment_delete_message.setText("Appointment deleted sucessfully!");
+            appointment_delete_message.setTextFill(Color.web("#000000"));
+        }
+
+        else {
+            appointment_delete_message.setText("Failed to delete appointment");
+            appointment_delete_message.setTextFill(Color.web("#FF0000"));
+        }
+
+        appointment_confirm_delete = false;
+        PopulateAppointmentTable();
+    }
+
+    public void SwitchToAddAppointmentForm(Event event) throws IOException {
+        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddAppointmentForm.fxml")));
+        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene the_scene = new Scene(the_form);
+        the_stage.setScene(the_scene);
+        the_stage.show();
+    }
+
+    public void SwitchToModifyAppointmentForm(Event event) throws IOException {
+        Appointment selected_appointment = appointment_table.getSelectionModel().getSelectedItem();
+        appointment_delete_message.setVisible(true);
+
+        if (selected_appointment == null) {
+            appointment_delete_message.setText("Select an appointment first");
+            appointment_delete_message.setTextFill(Color.web("#FF0000"));
+            return;
+        }
+
+        Database.SetAppointmentForEditing(selected_appointment);
+        SwitchToAddAppointmentForm(event);
     }
 }

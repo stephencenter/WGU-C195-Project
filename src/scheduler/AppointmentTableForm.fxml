@@ -9,10 +9,10 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduler.AppointmentTableController">
    <children>
       <Button layoutX="21.0" layoutY="555.0" mnemonicParsing="false" text="View Customers" />
-      <Button layoutX="21.0" layoutY="509.0" mnemonicParsing="false" text="Add" />
-      <Button layoutX="94.0" layoutY="509.0" mnemonicParsing="false" text="Modify" />
-      <Button layoutX="168.0" layoutY="509.0" mnemonicParsing="false" text="Delete" />
-      <Button layoutX="168.0" layoutY="555.0" mnemonicParsing="false" text="Logout" />
+      <Button layoutX="21.0" layoutY="509.0" mnemonicParsing="false" onAction="#SwitchToAddAppointmentForm" text="Add" />
+      <Button layoutX="94.0" layoutY="509.0" mnemonicParsing="false" onAction="#SwitchToModifyAppointmentForm" text="Modify" />
+      <Button layoutX="168.0" layoutY="509.0" mnemonicParsing="false" onAction="#DeleteSelectedAppointment" text="Delete" />
+      <Button layoutX="168.0" layoutY="555.0" mnemonicParsing="false" onAction="#Logout" text="Logout" />
       <Label layoutX="33.0" layoutY="35.0" text="List of Appointments" />
       <Label fx:id="appointment_delete_message" layoutX="412.0" layoutY="534.0" text="Status label" />
       <TableView fx:id="appointment_table" layoutX="61.0" layoutY="125.0" prefHeight="304.0" prefWidth="653.0" />
