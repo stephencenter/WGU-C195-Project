@@ -193,6 +193,17 @@ public class Database {
 
         return true;
     }
+    public static boolean DeleteAppointmentWithID(int id) {
+        try {
+            PreparedStatement statement = db_connection.prepareStatement("DELETE FROM appointments WHERE Appointment_ID=" + id);
+            statement.executeUpdate();
+        }
+        catch (SQLException ex) {
+            return false;
+        }
+
+        return true;
+    }
 
     public static void SetCustomerForEditing(Customer customer) {
         customer_to_edit = customer;

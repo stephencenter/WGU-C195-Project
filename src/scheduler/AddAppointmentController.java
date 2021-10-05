@@ -16,8 +16,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class AddAppointmentController {
     @FXML TextField title_field;
@@ -35,8 +38,11 @@ public class AddAppointmentController {
     @FXML ComboBox<Customer> customer_box;
     @FXML ComboBox<Contact> contact_box;
     @FXML Label error_label;
+    @FXML Label timezone_label;
 
     public void initialize() throws SQLException {
+        timezone_label.setText("Your timezone is " + TimeZone.getDefault().getDisplayName(Locale.getDefault()));
+
         // Set hour combobox lists
         ObservableList<String> hour_list = FXCollections.observableArrayList("12", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11");
 
@@ -200,12 +206,13 @@ public class AddAppointmentController {
             return;
         }
 
-        String start_time = MergeDateTimeStrings(start_date.toString(), start_hour, start_minute, start_ampm);
-        String end_time = MergeDateTimeStrings(end_date.toString(), end_hour, end_minute, end_ampm);
+        String start_merged = MergeDateTimeStrings(start_date.toString(), start_hour, start_minute, start_ampm);
+        String end_merged = MergeDateTimeStrings(end_date.toString(), end_hour, end_minute, end_ampm);
 
-        Timestamp start_timestamp = Database.ParseDate(start_time);
-        Timestamp end_timestamp = Database.ParseDate(end_time);
-        Timestamp current_timestamp = new Timestamp(new java.util.Date().getTime());
+        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        Timestamp start_timestamp = new Timestamp(Database.ParseDate(start_merged).getTime() - timezone_offset);
+        Timestamp end_timestamp = new Timestamp(Database.ParseDate(end_merged).getTime() - timezone_offset);
+        Timestamp current_timestamp = new Timestamp(System.currentTimeMillis() - timezone_offset);
 
         if (start_timestamp.compareTo(current_timestamp) < 0) {
             error_label.setText("Start time cannot be in the past!");
@@ -218,10 +225,9 @@ public class AddAppointmentController {
         }
 
         error_label.setVisible(false);
-        Database.AddAppointmentToDatabase(title, desc, location, type, start_time, end_time, customer, contact);
+        Database.AddAppointmentToDatabase(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact);
         ReturnToAppointmentTableForm(event);
     }
-
 
     public void ReturnToAppointmentTableForm(Event event) throws IOException {
         Parent customer_table_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));

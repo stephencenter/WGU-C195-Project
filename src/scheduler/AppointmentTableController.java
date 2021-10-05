@@ -108,7 +108,7 @@ public class AppointmentTableController {
             return;
         }
 
-        if (Database.DeleteCustomerWithID(selected_appointment.getId())) {
+        if (Database.DeleteAppointmentWithID(selected_appointment.getId())) {
             appointment_delete_message.setText("Appointment deleted sucessfully!");
             appointment_delete_message.setTextFill(Color.web("#000000"));
         }
@@ -124,6 +124,14 @@ public class AppointmentTableController {
 
     public void SwitchToAddAppointmentForm(Event event) throws IOException {
         Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddAppointmentForm.fxml")));
+        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene the_scene = new Scene(the_form);
+        the_stage.setScene(the_scene);
+        the_stage.show();
+    }
+
+    public void SwitchToCustomerTableForm(Event event) throws IOException {
+        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(the_form);
         the_stage.setScene(the_scene);
