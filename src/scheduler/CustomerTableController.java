@@ -118,7 +118,7 @@ public class CustomerTableController {
             return;
         }
 
-        if (selected_customer.HasAppointments()) {
+        if (!selected_customer.GetAppointments().isEmpty()) {
             customer_confirm_delete = false;
             customer_delete_message.setText("Can't delete customer with appointments set");
             customer_delete_message.setTextFill(Color.web("#FF0000"));

@@ -6,9 +6,7 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Database {
     private static final String db_url = "jdbc:mysql://localhost:3306/";
@@ -95,31 +93,47 @@ public class Database {
         current_user = new_user;
     }
 
-    public static String FormatInsertValues(String table, List<String> columns, List<String> values) {
-        String part_1 = "INSERT INTO " + table;
-        String part_2 = "(" + String.join(", ", columns) + ")";
-        String part_3 = " VALUES('" + String.join("', '", values) + "')";
+    public static PreparedStatement FormatInsertStatement(String table, List<String> columns, List<String> values) throws SQLException {
+        String column_string = String.join(", ", columns);
+        String value_string = String.join(", ", Collections.nCopies(values.size(), "?"));
+        String unprepared = String.format("INSERT INTO %s(%s) VALUES(%s)", table, column_string, value_string);
+        PreparedStatement prepared = db_connection.prepareStatement(unprepared);
 
-        return part_1 + part_2 + part_3;
+        for (int i = 0; i < values.size(); i++) {
+            prepared.setString(i + 1, values.get(i));
+        }
+
+        return prepared;
     }
 
-    public static String FormatUpdateValues(String table, String primary_key_name, int primary_key_value, List<String> columns, List<String> values) {
-        String part_1 = "UPDATE " + table + " SET ";
-        StringBuilder part_2 = new StringBuilder();
+    public static PreparedStatement FormatUpdateStatement(String table, String primary_key_name, int primary_key_value, List<String> columns, List<String> values) throws SQLException {
+        StringBuilder assignments = new StringBuilder();
         for (int i = 0; i < columns.size(); i++) {
-            part_2.append(String.format("%s='%s'", columns.get(i), values.get(i)));
+            assignments.append(String.format("%s=?", columns.get(i)));
             if (i < columns.size() - 1) {
-                part_2.append(", ");
+                assignments.append(", ");
             }
         }
-        String part_3 = " WHERE " + primary_key_name + " = " + primary_key_value;
 
-        return part_1 + part_2 + part_3;
+        String unprepared = String.format("UPDATE %s SET %s WHERE %s=%s", table, assignments, primary_key_name, primary_key_value);
+        PreparedStatement prepared = db_connection.prepareStatement(unprepared);
+
+        for (int i = 0; i < values.size(); i++) {
+            prepared.setString(i + 1, values.get(i));
+        }
+
+        return prepared;
     }
 
     public static Timestamp ParseDate(String date_string) throws ParseException {
         java.util.Date util_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date_string);
         return new Timestamp(util_date.getTime());
+    }
+
+    public static String FormatDateToTimezone(Timestamp timestamp) {
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
+        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        return date_format.format(new Timestamp(timestamp.getTime() + timezone_offset));
     }
 
     public static List<List<String>> GetResultsFromQuery(String query) throws SQLException {
@@ -148,9 +162,8 @@ public class Database {
 
         List<String> columns = Arrays.asList("Customer_Name", "Address", "Postal_Code", "Phone", "Create_Date", "Created_By", "Last_Update", "Last_Updated_By", "Division_ID");
         List<String> values = Arrays.asList(name, address, zipcode, phonenum, current_date, c_username, current_date, c_username, division_id);
-        String new_customer_statement = FormatInsertValues("customers", columns, values);
 
-        PreparedStatement new_customer_prepared = db_connection.prepareStatement(new_customer_statement);
+        PreparedStatement new_customer_prepared = FormatInsertStatement("customers", columns, values);
         new_customer_prepared.executeUpdate();
     }
 
@@ -161,9 +174,8 @@ public class Database {
 
         List<String> columns = Arrays.asList("Customer_Name", "Address", "Postal_Code", "Phone", "Last_Update", "Last_Updated_By", "Division_ID");
         List<String> values = Arrays.asList(name, address, zipcode, phonenum, current_date, c_username, division_id);
-        String update_customer_statement = FormatUpdateValues("customers", "Customer_ID", customer_id, columns, values);
 
-        PreparedStatement update_customer_prepared = db_connection.prepareStatement(update_customer_statement);
+        PreparedStatement update_customer_prepared = FormatUpdateStatement("customers", "Customer_ID", customer_id, columns, values);
         update_customer_prepared.executeUpdate();
     }
 
@@ -176,9 +188,8 @@ public class Database {
 
         List<String> columns = Arrays.asList("Title", "Description", "Location", "Type", "Start", "End", "Create_Date", "Created_By", "Last_Update", "Last_Updated_By", "Customer_ID", "User_ID", "Contact_ID");
         List<String> values = Arrays.asList(title, desc, location, type, start_time, end_time, current_date, c_username, current_date, c_username, customer_id, c_userid, contact_id);
-        String new_appointment_statement = FormatInsertValues("appointments", columns, values);
 
-        PreparedStatement new_appointment_prepared = db_connection.prepareStatement(new_appointment_statement);
+        PreparedStatement new_appointment_prepared = FormatInsertStatement("appointments", columns, values);
         new_appointment_prepared.executeUpdate();
     }
 

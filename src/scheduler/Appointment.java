@@ -51,4 +51,12 @@ public class Appointment {
         }
         return null;
     }
+
+    public String getStartTimeLocal() {
+        return Database.FormatDateToTimezone(start_time);
+    }
+
+    public String getEndTimeLocal() {
+        return Database.FormatDateToTimezone(end_time);
+    }
 }

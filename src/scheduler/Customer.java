@@ -1,7 +1,10 @@
 package scheduler;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Customer {
     private final int id;
@@ -53,11 +56,32 @@ public class Customer {
         return GetDivision().getName();
     }
 
-    public boolean HasAppointments() throws SQLException, ParseException {
+    public List<Appointment> GetAppointments() throws SQLException, ParseException {
+        List<Appointment> appt_list = new ArrayList<>();
         for (Appointment appointment : Database.GetAppointmentList()) {
             if (appointment.getCustomerId() == id) {
+                appt_list.add(appointment);
+            }
+        }
+        return appt_list;
+
+    }
+
+    public boolean HasOverlappingAppointments(Timestamp new_start, Timestamp new_end, int exclude) throws SQLException, ParseException {
+        for (Appointment appt : GetAppointments()) {
+            if (appt.getId() == exclude) {
+                continue;
+            }
+            if (appt.getStartTime().equals(new_start) || appt.getEndTime().equals(new_end)) {
                 return true;
             }
+            if (new_start.after(appt.getStartTime()) && new_start.before(appt.getEndTime())) {
+                return true;
+            }
+            if (new_end.after(appt.getStartTime()) && new_end.before(appt.getEndTime())) {
+                return true;
+            }
+            System.out.println(appt.getStartTime() + " " + appt.getEndTime() + " " + new_start + " " + new_end);
         }
         return false;
     }

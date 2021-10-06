@@ -53,10 +53,10 @@ public class AppointmentTableController {
         type_column.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
 
         TableColumn<Appointment, String> start_column = new TableColumn<>("Start Time");
-        start_column.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+        start_column.setCellValueFactory(new PropertyValueFactory<>("startTimeLocal"));
 
         TableColumn<Appointment, String> end_column = new TableColumn<>("End Time");
-        end_column.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+        end_column.setCellValueFactory(new PropertyValueFactory<>("endTimeLocal"));
 
         TableColumn<Appointment, Integer> customerid_column = new TableColumn<>("Customer ID");
         customerid_column.setCellValueFactory(new PropertyValueFactory<>("customerId"));

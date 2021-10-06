@@ -231,7 +231,10 @@ public class AddAppointmentController {
             return;
         }
 
-        // Check for overlaps with other appointments
+        if (customer.HasOverlappingAppointments(start_timestamp, end_timestamp, -1)) {
+            error_label.setText("That customer already has an appointment then");
+            return;
+        }
 
         error_label.setVisible(false);
         Database.AddAppointmentToDatabase(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact);
