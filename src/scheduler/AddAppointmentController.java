@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Objects;
@@ -27,11 +26,10 @@ public class AddAppointmentController {
     @FXML TextField description_field;
     @FXML TextField location_field;
     @FXML TextField type_field;
-    @FXML DatePicker start_datepicker;
+    @FXML DatePicker appt_datepicker;
     @FXML ComboBox<String> start_hour_box;
     @FXML ComboBox<String> start_minute_box;
     @FXML ComboBox<String> start_ampm_box;
-    @FXML DatePicker end_datepicker;
     @FXML ComboBox<String> end_hour_box;
     @FXML ComboBox<String> end_minute_box;
     @FXML ComboBox<String> end_ampm_box;
@@ -134,11 +132,10 @@ public class AddAppointmentController {
         String desc = description_field.getText();
         String location = location_field.getText();
         String type = type_field.getText();
-        LocalDate start_date = start_datepicker.getValue();
+        LocalDate appt_date = appt_datepicker.getValue();
         String start_hour = start_hour_box.getValue();
         String start_minute = start_minute_box.getValue();
         String start_ampm = start_ampm_box.getValue();
-        LocalDate end_date = end_datepicker.getValue();
         String end_hour = end_hour_box.getValue();
         String end_minute = end_minute_box.getValue();
         String end_ampm = end_ampm_box.getValue();
@@ -167,13 +164,13 @@ public class AddAppointmentController {
             return;
         }
 
-        if (start_date == null || start_hour == null || start_minute == null || start_ampm == null) {
+        if (appt_date == null || start_hour == null || start_minute == null || start_ampm == null) {
             error_label.setText("Start date and time must be completely filled out");
             return;
         }
 
-        if (end_date == null || end_hour == null || end_minute == null || end_ampm == null) {
-            error_label.setText("End date and time must be completely filled out");
+        if (end_hour == null || end_minute == null || end_ampm == null) {
+            error_label.setText("End time must be completely filled out");
             return;
         }
 
@@ -206,23 +203,35 @@ public class AddAppointmentController {
             return;
         }
 
-        String start_merged = MergeDateTimeStrings(start_date.toString(), start_hour, start_minute, start_ampm);
-        String end_merged = MergeDateTimeStrings(end_date.toString(), end_hour, end_minute, end_ampm);
+        String start_merged = MergeDateTimeStrings(appt_date.toString(), start_hour, start_minute, start_ampm);
+        String end_merged = MergeDateTimeStrings(appt_date.toString(), end_hour, end_minute, end_ampm);
 
         int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
         Timestamp start_timestamp = new Timestamp(Database.ParseDate(start_merged).getTime() - timezone_offset);
         Timestamp end_timestamp = new Timestamp(Database.ParseDate(end_merged).getTime() - timezone_offset);
         Timestamp current_timestamp = new Timestamp(System.currentTimeMillis() - timezone_offset);
 
-        if (start_timestamp.compareTo(current_timestamp) < 0) {
-            error_label.setText("Start time cannot be in the past!");
+        if (start_timestamp.before(current_timestamp)) {
+            error_label.setText("Start time cannot be in the past");
             return;
         }
 
-        if (start_timestamp.compareTo(end_timestamp) > 0) {
-            error_label.setText("Start time cannot be after end time!");
+        if (start_timestamp.after(end_timestamp)) {
+            error_label.setText("Start time cannot be after end time");
             return;
         }
+
+        if (start_timestamp.getHours() > 2 && start_timestamp.getHours() < 12) {
+            error_label.setText("The entire appointment must fall within business hours");
+            return;
+        }
+
+        if (end_timestamp.getHours() > 2 && end_timestamp.getHours() < 12) {
+            error_label.setText("The entire appointment must fall within business hours");
+            return;
+        }
+
+        // Check for overlaps with other appointments
 
         error_label.setVisible(false);
         Database.AddAppointmentToDatabase(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact);

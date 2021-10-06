@@ -43,8 +43,6 @@ public class LoginController {
 
         username_field.setText("stephen");
         password_field.setText("sloth101");
-        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
-        System.out.println(timezone_offset);
     }
 
     public Map<String, Map<String, String>> ParseLocalization() {

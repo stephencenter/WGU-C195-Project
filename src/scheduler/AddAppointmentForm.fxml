@@ -14,10 +14,9 @@
       <TextField fx:id="description_field" layoutX="139.0" layoutY="140.0" prefHeight="25.0" prefWidth="475.0" />
       <TextField fx:id="location_field" layoutX="139.0" layoutY="190.0" prefHeight="25.0" prefWidth="475.0" />
       <TextField fx:id="type_field" layoutX="139.0" layoutY="238.0" prefHeight="25.0" prefWidth="475.0" />
-      <DatePicker fx:id="start_datepicker" editable="false" layoutX="139.0" layoutY="284.0" promptText="Select Date" />
+      <DatePicker fx:id="appt_datepicker" editable="false" layoutX="139.0" layoutY="284.0" promptText="Select Date" />
       <ComboBox fx:id="start_hour_box" layoutX="325.0" layoutY="284.0" prefHeight="25.0" prefWidth="92.0" promptText="Hour" />
       <ComboBox fx:id="start_ampm_box" layoutX="523.0" layoutY="284.0" prefHeight="25.0" prefWidth="92.0" promptText="AM/PM" />
-      <DatePicker fx:id="end_datepicker" editable="false" layoutX="139.0" layoutY="334.0" promptText="Select Date" />
       <ComboBox fx:id="end_hour_box" layoutX="325.0" layoutY="334.0" prefHeight="25.0" prefWidth="92.0" promptText="Hour" />
       <ComboBox fx:id="end_ampm_box" layoutX="523.0" layoutY="334.0" prefHeight="25.0" prefWidth="92.0" promptText="AM/PM" />
       <ComboBox fx:id="customer_box" layoutX="138.0" layoutY="383.0" prefHeight="25.0" prefWidth="475.0" promptText="Select Customer" />
