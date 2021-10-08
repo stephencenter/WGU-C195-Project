@@ -207,6 +207,7 @@ public class AddAppointmentController {
         String end_merged = MergeDateTimeStrings(appt_date.toString(), end_hour, end_minute, end_ampm);
 
         int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        System.out.println(timezone_offset);
         Timestamp start_timestamp = new Timestamp(Database.ParseDate(start_merged).getTime() - timezone_offset);
         Timestamp end_timestamp = new Timestamp(Database.ParseDate(end_merged).getTime() - timezone_offset);
         Timestamp current_timestamp = new Timestamp(System.currentTimeMillis() - timezone_offset);
