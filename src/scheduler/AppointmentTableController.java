@@ -79,22 +79,7 @@ public class AppointmentTableController {
         appointment_table.getColumns().add(customerid_column);
         appointment_table.getColumns().add(userid_column);
 
-        long current_time = System.currentTimeMillis();
-        int fifteen_minutes = 900000;
-        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
-
-        for (Appointment appt : Database.GetAppointmentList()) {
-            // I have NO IDEA why I have to add a timezone offset to convert back to UTC.
-            // My dates are stored as UTC and look correct in the database, and Timestamp.getTime() says
-            // that it returns milliseconds in UTC time, but for some reason it doesn't work
-            long time_diff = appt.getStartTime().getTime() - current_time + timezone_offset;
-
-            if (time_diff > 0 && time_diff < fifteen_minutes) {
-                upcoming_appt_label.setVisible(true);
-                upcoming_appt_label.setText(String.format("Appt. #%s with customer #%s is in less than 15 minutes", appt.getId(), appt.getCustomerId()));
-                break;
-            }
-        }
+        AlertOfUpcomingAppointments();
     }
 
     public void PopulateAppointmentTable() throws SQLException, ParseException {
@@ -128,6 +113,28 @@ public class AppointmentTableController {
 
         appointment_table.setItems(filtered_list);
         appointment_table.setPlaceholder(new Label("Database has no appointments"));
+    }
+
+    public void AlertOfUpcomingAppointments() throws SQLException, ParseException {
+        upcoming_appt_label.setVisible(true);
+
+        long current_time = System.currentTimeMillis();
+        int fifteen_minutes = 900000;
+        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+
+        for (Appointment appt : Database.GetAppointmentList()) {
+            // I have NO IDEA why I have to add a timezone offset to convert back to UTC.
+            // My dates are stored as UTC and look correct in the database, and Timestamp.getTime() says
+            // that it returns milliseconds in UTC time, but for some reason it doesn't work
+            long time_diff = appt.getStartTime().getTime() - current_time + timezone_offset;
+
+            if (time_diff > 0 && time_diff < fifteen_minutes) {
+                upcoming_appt_label.setText(String.format("Upcoming appointment ID #%s on %s", appt.getId(), appt.getStartTimeLocal()));
+                return;
+            }
+        }
+
+        upcoming_appt_label.setText("There are no upcoming appointments");
     }
 
     public void Logout(Event event) throws IOException {

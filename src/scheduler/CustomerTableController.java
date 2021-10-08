@@ -211,7 +211,6 @@ public class CustomerTableController {
     }
 
     public void SwitchToAppointmentForm(Event event) throws IOException {
-        Database.SetCurrentUser(null);
         Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene the_scene = new Scene(the_form);

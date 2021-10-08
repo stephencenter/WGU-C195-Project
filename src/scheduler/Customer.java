@@ -81,7 +81,6 @@ public class Customer {
             if (new_end.after(appt.getStartTime()) && new_end.before(appt.getEndTime())) {
                 return true;
             }
-            System.out.println(appt.getStartTime() + " " + appt.getEndTime() + " " + new_start + " " + new_end);
         }
         return false;
     }
