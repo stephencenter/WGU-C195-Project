@@ -22,6 +22,10 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * This class is attached to the LoginForm. Its methods are called when the user interacts with that form.
+ * The LoginForm enables the user to login to the database so they can interact with it
+ */
 public class LoginController {
     @FXML Label title_label;
     @FXML Label username_label;
@@ -32,24 +36,45 @@ public class LoginController {
     @FXML Label error_label;
     @FXML Label timezone_label;
 
+    /**
+     * This method is called when the LoginForm is loaded. It loads the localization data
+     * from the file and uses it to set the text to the user's language
+     */
     public void initialize() {
-        Map<String, Map<String, String>> localization = ParseLocalization();
-        Locale locale = Locale.getDefault();
+        ApplyLocalization(GetLocalizationDictionary(), Locale.getDefault());
+
+        // This should be removed before submitting
+        username_field.setText("stephen");
+        password_field.setText("sloth101");
+    }
+
+    /**
+     * Take the provided localization dictionary and use it to translate all the UI text
+     * @param localization A dictionary containing translations for all the UI elements
+     * @param locale The user's locale
+     */
+    public void ApplyLocalization(Map<String, Map<String, String>> localization, Locale locale) {
         String user_language = locale.getLanguage();
+
+        String timezone_text = localization.get("timezone_label").get(user_language);
+        String timezone_name = TimeZone.getDefault().getDisplayName(locale);
+        timezone_label.setText(String.format("%s %s", timezone_text, timezone_name));
+
         title_label.setText(localization.get("title_label").get(user_language));
         username_label.setText(localization.get("username_label").get(user_language));
         password_label.setText(localization.get("password_label").get(user_language));
         login_button.setText(localization.get("login_button").get(user_language));
         error_label.setText(localization.get("error_label").get(user_language));
-
-        String timezone_text = localization.get("timezone_label").get(user_language);
-        timezone_label.setText(timezone_text + " " + TimeZone.getDefault().getDisplayName(locale));
-
-        username_field.setText("stephen");
-        password_field.setText("sloth101");
     }
 
-    public Map<String, Map<String, String>> ParseLocalization() {
+    /**
+     * This method loads the localization information from a file so we can display the
+     * UI in the user's language. It then parses this information into a Dictionary for easy
+     * use in our program
+     * @return A Dictionary containing a key for every text UI element, which corresponds to another
+     * dictionary containing the translation for that UI element in multiple languages
+     */
+    public Map<String, Map<String, String>> GetLocalizationDictionary() {
         // raw_format is a list that contains every line from the localization.txt file
         List<String> raw_format;
         try {
@@ -95,11 +120,20 @@ public class LoginController {
         return localization;
     }
 
-    public void PressLoginButton(Event event) throws SQLException, IOException {
+    /**
+     * This function is called when the login button is pressed. It attempts to log the user into
+     * the application so they can interact with the database. It also logs all attempts to a file.
+     * If the login attempt is successful it proceeds to the application
+     * @param event a JavaFX event
+     * @throws SQLException Interacting with the database could throw a SQLException
+     * @throws IOException Attempting to switch forms could throw an IOException
+     */
+    public void AttemptUserLogin(Event event) throws SQLException, IOException {
         String username = username_field.getText();
         String password = password_field.getText();
         User the_user = Database.GetUserWithLoginInfo(username, password);
 
+        // If user != null, that means the login attempt was successful
         RecordLoginAttempt(the_user != null);
 
         if (the_user == null) {
@@ -115,6 +149,12 @@ public class LoginController {
         the_stage.show();
     }
 
+    /**
+     * This method records all login attempts, including the time and date and whether they were successful.
+     * This information is stored in a file called login_activity.txt
+     * @param successful whether or not the login attempt was successful
+     * @throws IOException attempting to write to the file could throw an IOException
+     */
     public void RecordLoginAttempt(boolean successful) throws IOException {
         String log_message;
         Timestamp date = new Timestamp(System.currentTimeMillis());

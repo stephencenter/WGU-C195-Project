@@ -24,6 +24,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class is attached to the CustomerTableForm, and its methods are called when the user interacts
+ * with that form. The CustomerTableForm enables the user to view and modify the Customer table in the
+ * database
+ */
 public class CustomerTableController {
     @FXML TableView<Customer> customer_table;
     @FXML TextField customer_searchbar;
@@ -109,6 +114,13 @@ public class CustomerTableController {
         customer_table.setPlaceholder(new Label("No customers found with that name or ID"));
     }
 
+    /**
+     * This method takes the selected row from the customer table, and deletes the customer
+     * from the database that it corresponds to. Doing this requires the delete button to be
+     * clicked twice to prevent accidental deletions
+     * @throws SQLException Interacting with the database could throw a SQLException
+     * @throws ParseException Interacting with the database could throw a ParseException
+     */
     public void DeleteSelectedCustomer() throws SQLException, ParseException {
         Customer selected_customer = customer_table.getSelectionModel().getSelectedItem();
         customer_delete_message.setVisible(true);
@@ -211,6 +223,12 @@ public class CustomerTableController {
         SwitchToAddCustomerForm(event);
     }
 
+    /**
+     * This method is called when the "appointments" button is pressed. It switches the current form
+     * to the AppointmentTableForm
+     * @param event a JavaFX event
+     * @throws IOException Attempting to load the new form could raise an IOException
+     */
     public void SwitchToAppointmentForm(Event event) throws IOException {
         Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
         Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
