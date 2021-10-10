@@ -12,10 +12,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class LoginController {
@@ -96,6 +100,8 @@ public class LoginController {
         String password = password_field.getText();
         User the_user = Database.GetUserWithLoginInfo(username, password);
 
+        RecordLoginAttempt(the_user != null);
+
         if (the_user == null) {
             error_label.setVisible(true);
             return;
@@ -107,5 +113,26 @@ public class LoginController {
         Scene the_scene = new Scene(modify_products_scene);
         the_stage.setScene(the_scene);
         the_stage.show();
+    }
+
+    public void RecordLoginAttempt(boolean successful) throws IOException {
+        String log_message;
+        Timestamp date = new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat date_sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat time_sdf = new SimpleDateFormat("hh:mm:ss a");
+
+        if (successful) {
+            log_message = String.format("Successful login attempt on %s at %s\n", date_sdf.format(date), time_sdf.format(date));
+        } else {
+            log_message = String.format("Unsuccessful login attempt on %s at %s\n", date_sdf.format(date), time_sdf.format(date));
+        }
+
+        boolean does_file_exist = new File("login_activity.txt").createNewFile();
+
+        if (does_file_exist) {
+            Files.write(Paths.get("login_activity.txt"), log_message.getBytes());
+        } else {
+            Files.write(Paths.get("login_activity.txt"), log_message.getBytes(), StandardOpenOption.APPEND);
+        }
     }
 }
