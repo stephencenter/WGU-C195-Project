@@ -70,6 +70,7 @@ public class CustomerTableController {
         customer_table.getColumns().add(id_column);
         customer_table.getColumns().add(name_column);
         customer_table.getColumns().add(address_column);
+        customer_table.getColumns().add(zipcode_column);
         customer_table.getColumns().add(phonenum_column);
         customer_table.getColumns().add(country_column);
         customer_table.getColumns().add(division_column);

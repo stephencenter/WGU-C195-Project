@@ -246,7 +246,7 @@ public class Database {
 
     public static Appointment RetrieveAppointmentAndClear() {
         Appointment return_value = appointment_to_edit;
-        customer_to_edit = null;
+        appointment_to_edit = null;
         return return_value;
     }
 }

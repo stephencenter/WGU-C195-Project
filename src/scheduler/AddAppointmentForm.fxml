@@ -36,9 +36,9 @@
             <Font size="18.0" />
          </font>
       </Button>
-      <Label fx:id="error_label" layoutX="254.0" layoutY="501.0" prefHeight="17.0" prefWidth="359.0" text="Error" textFill="RED" visible="false">
+      <Label fx:id="error_label" layoutX="256.0" layoutY="487.0" prefHeight="17.0" prefWidth="359.0" text="Error" textFill="RED" visible="false">
          <font>
-            <Font size="14.0" />
+            <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <Label fx:id="add_or_modify_label" layoutX="37.0" layoutY="29.0" text="Schedule a New Appointment">
@@ -53,5 +53,10 @@
       </Button>
       <Label layoutX="385.0" layoutY="25.0" prefHeight="6.0" prefWidth="262.0" text="Business hours are 8:00am to 10:00pm EST" wrapText="true" />
       <Label fx:id="timezone_label" layoutX="385.0" layoutY="52.0" text="Your timezone is" />
+      <Label fx:id="error_count_label" layoutX="256.0" layoutY="517.0" text="Label" textFill="RED" visible="false">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

@@ -13,6 +13,8 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,13 +28,22 @@ public class AddCustomerController {
     @FXML ComboBox<Country> country_combo;
     @FXML ComboBox<Division> region_combo;
     @FXML Label error_label;
+    @FXML Label error_count_label;
 
     private Customer customer_to_edit;
 
     public void initialize() throws SQLException {
-        country_combo.setItems(Database.GetCountryList());
+        CreateComboBoxes();
 
-        Callback<ListView<Country>, ListCell<Country>> cell_factory = new Callback<>() {
+        customer_to_edit = Database.RetrieveCustomerAndClear();
+        if (customer_to_edit != null) {
+            add_or_modify_label.setText("Modify an existing customer");
+            FillOutPreexistingInfo();
+        }
+    }
+
+    public void CreateComboBoxes() throws SQLException {
+        Callback<ListView<Country>, ListCell<Country>> country_cell_factory = new Callback<>() {
             @Override
             public ListCell<Country> call(ListView<Country> l) {
                 return new ListCell<>() {
@@ -48,15 +59,33 @@ public class AddCustomerController {
                 };
             }
         };
-        country_combo.setButtonCell(cell_factory.call(null));
-        country_combo.setCellFactory(cell_factory);
 
-        customer_to_edit = Database.RetrieveCustomerAndClear();
-        if (customer_to_edit == null) {
-            return;
-        }
-        add_or_modify_label.setText("Modify an existing customer");
+        country_combo.setButtonCell(country_cell_factory.call(null));
+        country_combo.setCellFactory(country_cell_factory);
+        country_combo.setItems(Database.GetCountryList());
 
+        Callback<ListView<Division>, ListCell<Division>> div_cell_factory = new Callback<>() {
+            @Override
+            public ListCell<Division> call(ListView<Division> l) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(Division item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.getName());
+                        }
+                    }
+                };
+            }
+        };
+
+        region_combo.setButtonCell(div_cell_factory.call(null));
+        region_combo.setCellFactory(div_cell_factory);
+    }
+
+    public void FillOutPreexistingInfo() throws SQLException {
         name_field.setText(customer_to_edit.getName());
         address_field.setText(customer_to_edit.getAddress());
         zipcode_field.setText(customer_to_edit.getZipcode());
@@ -95,27 +124,6 @@ public class AddCustomerController {
 
         Stream<Division> division_stream = Database.GetDivisionList().stream().filter(c -> c.getCountryId() == chosen_country.getId());
         region_combo.setItems(division_stream.collect(Collectors.toCollection(FXCollections::observableArrayList)));
-
-        Callback<ListView<Division>, ListCell<Division>> cell_factory = new Callback<>() {
-            @Override
-            public ListCell<Division> call(ListView<Division> l) {
-                return new ListCell<>() {
-                    @Override
-                    protected void updateItem(Division item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
-                            setGraphic(null);
-                        } else {
-                            setText(item.getName());
-                        }
-                    }
-                };
-            }
-        };
-        region_combo.setButtonCell(cell_factory.call(null));
-        region_combo.setCellFactory(cell_factory);
-
-        region_combo.setValue(null);
         region_combo.setDisable(false);
     }
 
@@ -126,49 +134,24 @@ public class AddCustomerController {
         String phonenum = phonenum_field.getText();
         Division division = region_combo.getValue();
 
-        error_label.setVisible(true);
-        if (name.isBlank()) {
-            error_label.setText("Name cannot be blank");
-            return;
-        }
+        List<String> error_list = GetFormErrors(name, address, zipcode, phonenum, division);
+        if (!error_list.isEmpty()) {
+            error_label.setVisible(true);
+            error_label.setText(error_list.get(0));
 
-        if (address.isBlank()) {
-            error_label.setText("Address cannot be blank");
-            return;
-        }
+            error_count_label.setVisible(true);
+            if (error_list.size() > 2) {
+                error_count_label.setText(String.format("%s more problems found", error_list.size() - 1));
+            }
 
-        if (zipcode.isBlank()) {
-            error_label.setText("Zipcode cannot be blank");
-            return;
-        }
+            else if (error_list.size() == 2) {
+                error_count_label.setText(error_list.get(1));
+            }
 
-        if (phonenum.isBlank()) {
-            error_label.setText("Phone Number cannot be blank");
-            return;
-        }
+            else {
+                error_count_label.setVisible(false);
+            }
 
-        if (division == null) {
-            error_label.setText("Both a country and a region must be selected");
-            return;
-        }
-
-        if (name.length() > 50) {
-            error_label.setText("Name cannot be longer than 50 characters");
-            return;
-        }
-
-        if (address.length() > 100) {
-            error_label.setText("Address cannot be longer than 100 characters");
-            return;
-        }
-
-        if (zipcode.length() > 50) {
-            error_label.setText("Zipcode cannot be longer than 50 characters");
-            return;
-        }
-
-        if (phonenum.length() > 50) {
-            error_label.setText("Phone number cannot be longer than 50 characters");
             return;
         }
 
@@ -180,6 +163,48 @@ public class AddCustomerController {
         }
 
         ReturnToCustomerTableForm(event);
+    }
+
+    public List<String> GetFormErrors(String name, String address, String zipcode, String phonenum, Division division) {
+        List<String> list_of_errors = new ArrayList<>();
+
+        if (name.isBlank()) {
+            list_of_errors.add("Name cannot be blank");
+        }
+
+        if (address.isBlank()) {
+            list_of_errors.add("Address cannot be blank");
+        }
+
+        if (zipcode.isBlank()) {
+            list_of_errors.add("Zipcode cannot be blank");
+        }
+
+        if (phonenum.isBlank()) {
+            list_of_errors.add("Phone Number cannot be blank");
+        }
+
+        if (division == null) {
+            list_of_errors.add("Both a country and a region must be selected");
+        }
+
+        if (name.length() > 50) {
+            list_of_errors.add("Name cannot be longer than 50 characters");
+        }
+
+        if (address.length() > 100) {
+            list_of_errors.add("Address cannot be longer than 100 characters");
+        }
+
+        if (zipcode.length() > 50) {
+            list_of_errors.add("Zipcode cannot be longer than 50 characters");
+        }
+
+        if (phonenum.length() > 50) {
+            list_of_errors.add("Phone number cannot be longer than 50 characters");
+        }
+
+        return list_of_errors;
     }
 
     public void ReturnToCustomerTableForm(Event event) throws IOException {
