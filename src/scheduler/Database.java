@@ -193,6 +193,20 @@ public class Database {
         new_appointment_prepared.executeUpdate();
     }
 
+    public static void UpdateExistingAppointment(String title, String desc, String location, String type, String start_time, String end_time, Customer customer, Contact contact, int appt_id) throws SQLException {
+        String current_date = new Timestamp(new java.util.Date().getTime()).toString();
+        String c_username = current_user.getUsername();
+        String c_userid = String.valueOf(current_user.getId());
+        String customer_id = String.valueOf(customer.getId());
+        String contact_id = String.valueOf(contact.getId());
+
+        List<String> columns = Arrays.asList("Title", "Description", "Location", "Type", "Start", "End", "Last_Update", "Last_Updated_By", "Customer_ID", "User_ID", "Contact_ID");
+        List<String> values = Arrays.asList(title, desc, location, type, start_time, end_time, current_date, c_username, customer_id, c_userid, contact_id);
+
+        PreparedStatement update_appointment_prepared = FormatUpdateStatement("appointments", "Appointment_ID", appt_id, columns, values);
+        update_appointment_prepared.executeUpdate();
+    }
+
     public static boolean DeleteCustomerWithID(int id) {
         try {
             PreparedStatement statement = db_connection.prepareStatement("DELETE FROM customers WHERE Customer_ID=" + id);

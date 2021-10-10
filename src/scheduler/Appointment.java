@@ -41,6 +41,7 @@ public class Appointment {
     public Timestamp getEndTime() { return end_time; }
     public int getCustomerId() { return customer_id; }
     public int getUserId() { return user_id; }
+    public int getContactId() { return contact_id; }
 
     public String getContactName() throws SQLException {
         ObservableList<Contact> contact_list = Database.GetContactList();

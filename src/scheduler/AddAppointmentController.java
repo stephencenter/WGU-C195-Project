@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Objects;
@@ -37,10 +38,59 @@ public class AddAppointmentController {
     @FXML ComboBox<Contact> contact_box;
     @FXML Label error_label;
     @FXML Label timezone_label;
+    @FXML Label add_or_modify_label;
+
+    Appointment appointment_to_edit = null;
 
     public void initialize() throws SQLException {
         timezone_label.setText("Your timezone is " + TimeZone.getDefault().getDisplayName(Locale.getDefault()));
+        CreateComboBoxes();
 
+        appointment_to_edit = Database.RetrieveAppointmentAndClear();
+        if (appointment_to_edit == null) {
+            return;
+        }
+        add_or_modify_label.setText("Modify an appointment");
+
+        title_field.setText(appointment_to_edit.getTitle());
+        description_field.setText(appointment_to_edit.getDescription());
+        location_field.setText(appointment_to_edit.getLocation());
+        type_field.setText(appointment_to_edit.getAppointmentType());
+
+        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        Timestamp start_time = new Timestamp(appointment_to_edit.getStartTime().getTime() + timezone_offset);
+        Timestamp end_time = new Timestamp(appointment_to_edit.getEndTime().getTime() + timezone_offset);
+
+        appt_datepicker.setValue(start_time.toLocalDateTime().toLocalDate());
+
+        SimpleDateFormat get_hours = new SimpleDateFormat("hh");
+        start_hour_box.setValue(get_hours.format(start_time));
+        end_hour_box.setValue(get_hours.format(end_time));
+
+        SimpleDateFormat get_minutes = new SimpleDateFormat("mm");
+        start_minute_box.setValue(get_minutes.format(start_time));
+        end_minute_box.setValue(get_minutes.format(end_time));
+
+        SimpleDateFormat get_ampm = new SimpleDateFormat("a");
+        start_ampm_box.setValue(get_ampm.format(start_time));
+        end_ampm_box.setValue(get_ampm.format(end_time));
+
+        for (int i = 0; i < contact_box.getItems().size(); i++) {
+            if (contact_box.getItems().get(i).getId() == appointment_to_edit.getContactId()) {
+                contact_box.getSelectionModel().select(i);
+                break;
+            }
+        }
+
+        for (int i = 0; i < customer_box.getItems().size(); i++) {
+            if (customer_box.getItems().get(i).getId() == appointment_to_edit.getCustomerId()) {
+                customer_box.getSelectionModel().select(i);
+                break;
+            }
+        }
+    }
+
+    public void CreateComboBoxes() throws SQLException {
         // Set hour combobox lists
         ObservableList<String> hour_list = FXCollections.observableArrayList("12", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11");
 
@@ -114,6 +164,7 @@ public class AddAppointmentController {
         contact_box.setButtonCell(contact_factory.call(null));
         contact_box.setCellFactory(contact_factory);
     }
+
 
     public String MergeDateTimeStrings(String date, String hour, String minute, String ampm) {
         if (hour.equals("12") && ampm.equalsIgnoreCase("am")) {
@@ -236,8 +287,14 @@ public class AddAppointmentController {
             return;
         }
 
-        error_label.setVisible(false);
-        Database.AddAppointmentToDatabase(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact);
+        if (appointment_to_edit == null) {
+            Database.AddAppointmentToDatabase(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact);
+        }
+        else {
+            Database.UpdateExistingAppointment(title, desc, location, type, start_timestamp.toString(), end_timestamp.toString(), customer, contact, appointment_to_edit.getId());
+        }
+
+
         ReturnToAppointmentTableForm(event);
     }
 

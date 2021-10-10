@@ -66,9 +66,11 @@ public class AddCustomerController {
         if (the_country == null) {
             return;
         }
+
         for (int i = 0; i < country_combo.getItems().size(); i++) {
             if (country_combo.getItems().get(i).getId() == the_country.getId()) {
                 country_combo.getSelectionModel().select(i);
+                break;
             }
         }
 
@@ -77,6 +79,7 @@ public class AddCustomerController {
         for (int i = 0; i < region_combo.getItems().size(); i++) {
             if (region_combo.getItems().get(i).getId() == customer_to_edit.getDivisionId()) {
                 region_combo.getSelectionModel().select(i);
+                break;
             }
         }
     }
@@ -169,14 +172,13 @@ public class AddCustomerController {
             return;
         }
 
-        error_label.setVisible(false);
-
         if (customer_to_edit == null) {
             Database.AddCustomerToDatabase(name, address, zipcode, phonenum, division);
         }
         else {
             Database.UpdateExistingCustomer(name, address, zipcode, phonenum, division, customer_to_edit.getId());
         }
+
         ReturnToCustomerTableForm(event);
     }
 
