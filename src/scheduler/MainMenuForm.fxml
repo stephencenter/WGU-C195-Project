@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button layoutX="33.0" layoutY="130.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="110.0" text="Appointments">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button layoutX="160.0" layoutY="130.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="110.0" text="Customers">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button layoutX="287.0" layoutY="130.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="110.0" text="Reports">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button layoutX="413.0" layoutY="130.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="110.0" text="Logout" textFill="RED">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label layoutX="33.0" layoutY="32.0" text="Scheduling Software v1.0">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <Label layoutX="33.0" layoutY="63.0" text="Select an option">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>
