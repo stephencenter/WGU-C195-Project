@@ -4,23 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class AppointmentTableController {
@@ -137,15 +131,6 @@ public class AppointmentTableController {
         upcoming_appt_label.setText("There are no upcoming appointments");
     }
 
-    public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
-    }
-
     public void DeleteSelectedAppointment() throws SQLException, ParseException {
         Appointment selected_appointment = appointment_table.getSelectionModel().getSelectedItem();
         appointment_delete_message.setVisible(true);
@@ -178,19 +163,7 @@ public class AppointmentTableController {
     }
 
     public void SwitchToAddAppointmentForm(Event event) throws IOException {
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddAppointmentForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
-    }
-
-    public void SwitchToCustomerTableForm(Event event) throws IOException {
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
+        Main.LoadForm(getClass().getResource("AddAppointmentForm.fxml"), event, "Add an Appointment");
     }
 
     public void SwitchToModifyAppointmentForm(Event event) throws IOException {
@@ -204,6 +177,15 @@ public class AppointmentTableController {
         }
 
         Database.SetAppointmentForEditing(selected_appointment);
-        SwitchToAddAppointmentForm(event);
+        Main.LoadForm(getClass().getResource("AddAppointmentForm.fxml"), event, "Modify an Appointment");
+    }
+
+    public void SwitchToMainMenuForm(Event event) throws IOException {
+        Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
+    }
+
+    public void Logout(Event event) throws IOException {
+        Database.SetCurrentUser(null);
+        Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }

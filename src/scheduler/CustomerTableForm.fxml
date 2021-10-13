@@ -31,7 +31,7 @@
             <Font size="24.0" />
          </font></Label>
       <TextField fx:id="customer_searchbar" layoutX="370.0" layoutY="28.0" onKeyTyped="#PopulateCustomerTable" prefHeight="25.0" prefWidth="213.0" promptText="Search by name or ID" />
-      <Button layoutX="24.0" layoutY="361.0" mnemonicParsing="false" onAction="#SwitchToAppointmentForm" prefHeight="35.0" prefWidth="163.0" text="Main Menu">
+      <Button layoutX="24.0" layoutY="361.0" mnemonicParsing="false" onAction="#SwitchToMainMenuForm" prefHeight="35.0" prefWidth="163.0" text="Main Menu">
          <font>
             <Font size="14.0" />
          </font></Button>

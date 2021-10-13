@@ -3,19 +3,13 @@ package scheduler;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -208,10 +202,6 @@ public class AddCustomerController {
     }
 
     public void ReturnToCustomerTableForm(Event event) throws IOException {
-        Parent customer_table_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerTableForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(customer_table_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
+        Main.LoadForm(getClass().getResource("CustomerTableForm.fxml"), event, "Customer Table");
     }
 }

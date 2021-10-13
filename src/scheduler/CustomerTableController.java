@@ -4,22 +4,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -163,35 +157,6 @@ public class CustomerTableController {
     }
 
     /**
-     * This method is called when hitting the add button. It switches the current form
-     * to the AddCustomerForm so the user can add a new customer to the database
-     * @param event a JavaFX event
-     * @throws IOException Attempting to laod the new form could raise an IOException
-     */
-    public void SwitchToAddCustomerForm(Event event) throws IOException {
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AddCustomerForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
-    }
-
-    /**
-     * This method is called when hitting the log out button. It sets the current user to null
-     * and then switches back to the login screen so the user can login as a different user
-     * @param event a JavaFX event
-     * @throws IOException Attempting to laod the new form could raise an IOException
-     */
-    public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("LoginForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
-    }
-
-    /**
      * This method is called when clicking off the current customer to a different one.
      * Deleting a customer requires clicking the delete button twice to prevent accidental deletions.
      * The code in this method resets this two-click requirement
@@ -199,6 +164,16 @@ public class CustomerTableController {
     public void ResetCustomerDeleteStatus() {
         customer_delete_message.setVisible(false);
         customer_confirm_delete = false;
+    }
+
+    /**
+     * This method is called when hitting the add button. It switches the current form
+     * to the AddCustomerForm so the user can add a new customer to the database
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
+    public void SwitchToAddCustomerForm(Event event) throws IOException {
+        Main.LoadForm(getClass().getResource("AddCustomerForm.fxml"), event, "Add a Customer");
     }
 
     /**
@@ -220,20 +195,27 @@ public class CustomerTableController {
         }
 
         Database.SetCustomerForEditing(selected_customer);
-        SwitchToAddCustomerForm(event);
+        Main.LoadForm(getClass().getResource("AddCustomerForm.fxml"), event, "Modify a Customer");
     }
 
     /**
-     * This method is called when the "appointments" button is pressed. It switches the current form
-     * to the AppointmentTableForm
+     * This method is called when the "Main Menu" button is pressed. It switches the view to the
+     * main menu form
      * @param event a JavaFX event
      * @throws IOException Attempting to load the new form could raise an IOException
      */
-    public void SwitchToAppointmentForm(Event event) throws IOException {
-        Parent the_form = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AppointmentTableForm.fxml")));
-        Stage the_stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene the_scene = new Scene(the_form);
-        the_stage.setScene(the_scene);
-        the_stage.show();
+    public void SwitchToMainMenuForm(Event event) throws IOException {
+        Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
+    }
+
+    /**
+     * This method is called when hitting the log out button. It sets the current user to null
+     * and then switches back to the login screen so the user can login as a different user
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
+    public void Logout(Event event) throws IOException {
+        Database.SetCurrentUser(null);
+        Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }
