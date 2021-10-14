@@ -13,6 +13,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class is attached to the AddCustomerForm. Its methods are called when the user interacts
+ * with that form. Its responsible for handling logic involving verifying the information entered
+ * into the form and sending that information to the database for inserting or updating
+ */
 public class AddCustomerController {
     @FXML Label add_or_modify_label;
     @FXML TextField name_field;
@@ -20,12 +25,17 @@ public class AddCustomerController {
     @FXML TextField zipcode_field;
     @FXML TextField phonenum_field;
     @FXML ComboBox<Country> country_combo;
-    @FXML ComboBox<Division> region_combo;
+    @FXML ComboBox<Division> division_combo;
     @FXML Label error_label;
     @FXML Label error_count_label;
 
     private Customer customer_to_edit;
 
+    /**
+     * This method is called upon loading the form. It calls the methods required to
+     * prepare the form for use by the user
+     * @throws SQLException calling FillOutPreexistingInfo() can throw a SQLException
+     */
     public void initialize() throws SQLException {
         CreateComboBoxes();
 
@@ -36,6 +46,11 @@ public class AddCustomerController {
         }
     }
 
+    /**
+     * This method creates both the Country combo box and the Division combo box.
+     * It also populates the Country combo box, but not the Division box (that is populated dynamically later)
+     * @throws SQLException
+     */
     public void CreateComboBoxes() throws SQLException {
         Callback<ListView<Country>, ListCell<Country>> country_cell_factory = new Callback<>() {
             @Override
@@ -75,10 +90,15 @@ public class AddCustomerController {
             }
         };
 
-        region_combo.setButtonCell(div_cell_factory.call(null));
-        region_combo.setCellFactory(div_cell_factory);
+        division_combo.setButtonCell(div_cell_factory.call(null));
+        division_combo.setCellFactory(div_cell_factory);
     }
 
+    /**
+     * This method is only called if the form is loaded with a customer_to_edit selected.
+     * It takes the information from that customer and uses it to fill out the form
+     * @throws SQLException Interacting with the Database could throw a SQLException
+     */
     public void FillOutPreexistingInfo() throws SQLException {
         name_field.setText(customer_to_edit.getName());
         address_field.setText(customer_to_edit.getAddress());
@@ -90,6 +110,8 @@ public class AddCustomerController {
             return;
         }
 
+        // Iterate through the country list until we find the country that matches the customer,
+        // then select it
         for (int i = 0; i < country_combo.getItems().size(); i++) {
             if (country_combo.getItems().get(i).getId() == the_country.getId()) {
                 country_combo.getSelectionModel().select(i);
@@ -97,28 +119,40 @@ public class AddCustomerController {
             }
         }
 
-        UpdateRegionList();
+        // Now that we have a country selected we update the division list to match
+        UpdateDivisionList();
 
-        for (int i = 0; i < region_combo.getItems().size(); i++) {
-            if (region_combo.getItems().get(i).getId() == customer_to_edit.getDivisionId()) {
-                region_combo.getSelectionModel().select(i);
+        // Now we iterate through the division list to find and select the right division
+        for (int i = 0; i < division_combo.getItems().size(); i++) {
+            if (division_combo.getItems().get(i).getId() == customer_to_edit.getDivisionId()) {
+                division_combo.getSelectionModel().select(i);
                 break;
             }
         }
     }
 
-    public void UpdateRegionList() throws SQLException {
+    /**
+     * This method is called when the country combo box has its value changed.
+     * It sets the division combo box's items to match the selected country
+     *
+     * LAMBDA EXPLANATION: In this method I used a lambda expression as the argument for the
+     * filter method. This allowed me to take the list of all divisions in the database and
+     * narrow it down to only the divisions that belong to the selected country
+     *
+     * @throws SQLException Querying the database could throw a SQLException
+     */
+    public void UpdateDivisionList() throws SQLException {
         Country chosen_country = country_combo.getValue();
         if (chosen_country == null) {
-            region_combo.setItems(null);
-            region_combo.setValue(null);
-            region_combo.setDisable(true);
+            division_combo.setItems(null);
+            division_combo.setValue(null);
+            division_combo.setDisable(true);
             return;
         }
 
         Stream<Division> division_stream = Database.GetDivisionList().stream().filter(c -> c.getCountryId() == chosen_country.getId());
-        region_combo.setItems(division_stream.collect(Collectors.toCollection(FXCollections::observableArrayList)));
-        region_combo.setDisable(false);
+        division_combo.setItems(division_stream.collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        division_combo.setDisable(false);
     }
 
     public void SaveCustomerInfo(Event event) throws SQLException, IOException {
@@ -126,7 +160,7 @@ public class AddCustomerController {
         String address = address_field.getText();
         String zipcode = zipcode_field.getText();
         String phonenum = phonenum_field.getText();
-        Division division = region_combo.getValue();
+        Division division = division_combo.getValue();
 
         List<String> error_list = GetFormErrors(name, address, zipcode, phonenum, division);
         if (!error_list.isEmpty()) {
@@ -179,7 +213,7 @@ public class AddCustomerController {
         }
 
         if (division == null) {
-            list_of_errors.add("Both a country and a region must be selected");
+            list_of_errors.add("Both a country and a division must be selected");
         }
 
         if (name.length() > 50) {
