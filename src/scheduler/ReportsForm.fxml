@@ -61,9 +61,9 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Label layoutX="35.0" layoutY="45.0" text="There are X appointments in the past" />
-                  <Label layoutX="35.0" layoutY="92.0" text="There are X appointments in the future" />
-                  <Label layoutX="35.0" layoutY="145.0" text="There are X appointments currently ongoing" />
+                  <Label fx:id="past_appt_label" layoutX="35.0" layoutY="45.0" text="There are X appointments in the past" />
+                  <Label fx:id="future_appt_label" layoutX="35.0" layoutY="92.0" text="There are X appointments in the future" />
+                  <Label fx:id="present_appt_label" layoutX="35.0" layoutY="145.0" text="There are X appointments currently ongoing" />
                   <Button layoutX="230.0" layoutY="305.0" mnemonicParsing="false" onAction="#SwitchToMainMenuForm" prefHeight="50.0" prefWidth="140.0" text="Main Menu">
                      <font>
                         <Font size="14.0" />
