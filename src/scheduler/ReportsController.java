@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReportsController {
     @FXML ListView<String> appt_type_list;
@@ -23,7 +25,48 @@ public class ReportsController {
     @FXML Label present_appt_label;
 
     public void initialize() throws SQLException, ParseException {
+        AppointmentsByTypeMonth();
         PastPresentFutureAppointments();
+    }
+
+    public void AppointmentsByTypeMonth() throws SQLException, ParseException {
+        Map<String, Integer> type_count = new HashMap<>();
+        Map<String, Integer> month_count = new HashMap<>();
+
+        for (Appointment appt : Database.GetAppointmentList()) {
+            String type_key = appt.getAppointmentType();
+
+            if (type_count.containsKey(type_key)) {
+                type_count.put(type_key, type_count.get(type_key) + 1);
+            }
+
+            else {
+                type_count.put(type_key, 1);
+            }
+
+            SimpleDateFormat get_month = new SimpleDateFormat("MMMM");
+            String month_key = get_month.format(appt.getStartTime());
+
+            if (month_count.containsKey(month_key)) {
+                month_count.put(month_key, month_count.get(month_key) + 1);
+            }
+
+            else {
+                month_count.put(month_key, 1);
+            }
+        }
+
+        ObservableList<String> type_strings = FXCollections.observableArrayList();
+        for (String key : type_count.keySet()) {
+            type_strings.add(String.format("(%s)    %s", type_count.get(key), key));
+        }
+        appt_type_list.setItems(type_strings);
+
+        ObservableList<String> month_strings = FXCollections.observableArrayList();
+        for (String key : month_count.keySet()) {
+            month_strings.add(String.format("(%s)    %s", month_count.get(key), key));
+        }
+        appt_month_list.setItems(month_strings);
     }
 
     public void PastPresentFutureAppointments() throws SQLException, ParseException {
