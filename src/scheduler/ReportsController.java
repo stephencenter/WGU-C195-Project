@@ -6,26 +6,29 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Month;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReportsController {
     @FXML ListView<String> appt_type_list;
     @FXML ListView<String> appt_month_list;
+    @FXML TableView<Contact> contact_table;
     @FXML Label past_appt_label;
     @FXML Label future_appt_label;
     @FXML Label present_appt_label;
 
     public void initialize() throws SQLException, ParseException {
         AppointmentsByTypeMonth();
+        CreateContactTable();
         PastPresentFutureAppointments();
     }
 
@@ -69,6 +72,23 @@ public class ReportsController {
         appt_month_list.setItems(month_strings);
     }
 
+    public void CreateContactTable() throws SQLException {
+        TableColumn<Contact, Integer> id_column = new TableColumn<>("ID");
+        id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Contact, String> name_column = new TableColumn<>("Name");
+        name_column.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Contact, String> address_column = new TableColumn<>("Email");
+        address_column.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+        contact_table.getColumns().add(id_column);
+        contact_table.getColumns().add(name_column);
+        contact_table.getColumns().add(address_column);
+        contact_table.setPlaceholder(new Label("Database has no contacts"));
+        contact_table.setItems(Database.GetContactList());
+    }
+
     public void PastPresentFutureAppointments() throws SQLException, ParseException {
         int past_appts = 0;
         int future_appts = 0;
@@ -94,12 +114,23 @@ public class ReportsController {
         present_appt_label.setText(String.format("There are %s appointments currently ongoing", present_appts));
     }
 
+    public void ViewContactSchedule(Event event) throws IOException {
+        Contact selected_contact = contact_table.getSelectionModel().getSelectedItem();
+
+        if (selected_contact == null) {
+            return;
+        }
+
+        StateManager.SetStoredContact(selected_contact);
+        Main.LoadForm(getClass().getResource("ContactScheduleForm.fxml"), event, "Contact schedule");
+    }
+
     public void SwitchToMainMenuForm(Event event) throws IOException {
         Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
     }
 
     public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
+        StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }

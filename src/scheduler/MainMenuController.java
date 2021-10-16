@@ -17,7 +17,7 @@ public class MainMenuController {
     }
 
     public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
+        StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }

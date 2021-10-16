@@ -39,7 +39,7 @@ public class AddCustomerController {
     public void initialize() throws SQLException {
         CreateComboBoxes();
 
-        customer_to_edit = Database.RetrieveCustomerAndClear();
+        customer_to_edit = StateManager.RetrieveStoredCustomer();
         if (customer_to_edit != null) {
             add_or_modify_label.setText("Modify an existing customer");
             FillOutPreexistingInfo();
@@ -49,7 +49,7 @@ public class AddCustomerController {
     /**
      * This method creates both the Country combo box and the Division combo box.
      * It also populates the Country combo box, but not the Division box (that is populated dynamically later)
-     * @throws SQLException
+     * @throws SQLException Retrieving the list of contacts could cause a SQLException
      */
     public void CreateComboBoxes() throws SQLException {
         Callback<ListView<Country>, ListCell<Country>> country_cell_factory = new Callback<>() {

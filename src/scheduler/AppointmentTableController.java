@@ -176,7 +176,7 @@ public class AppointmentTableController {
             return;
         }
 
-        Database.SetAppointmentForEditing(selected_appointment);
+        StateManager.SetStoredAppointment(selected_appointment);
         Main.LoadForm(getClass().getResource("AddAppointmentForm.fxml"), event, "Modify an Appointment");
     }
 
@@ -185,7 +185,7 @@ public class AppointmentTableController {
     }
 
     public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
+        StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }

@@ -194,7 +194,7 @@ public class CustomerTableController {
             return;
         }
 
-        Database.SetCustomerForEditing(selected_customer);
+        StateManager.SetStoredCustomer(selected_customer);
         Main.LoadForm(getClass().getResource("AddCustomerForm.fxml"), event, "Modify a Customer");
     }
 
@@ -215,7 +215,7 @@ public class CustomerTableController {
      * @throws IOException Attempting to laod the new form could raise an IOException
      */
     public void Logout(Event event) throws IOException {
-        Database.SetCurrentUser(null);
+        StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
     }
 }

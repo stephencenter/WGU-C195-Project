@@ -14,10 +14,6 @@ public class Database {
     private static final String db_username = "sqlUser";
     private static final String db_password = "Passw0rd!";
     private static Connection db_connection;
-    private static User current_user;
-
-    private static Customer customer_to_edit = null;
-    private static Appointment appointment_to_edit = null;
 
     public static void ConnectToDatabase() throws SQLException {
         db_connection = DriverManager.getConnection(db_url + db_name, db_username, db_password);
@@ -89,10 +85,6 @@ public class Database {
         return FXCollections.observableList(appointment_list);
     }
 
-    public static void SetCurrentUser(User new_user) {
-        current_user = new_user;
-    }
-
     public static PreparedStatement FormatInsertStatement(String table, List<String> columns, List<String> values) throws SQLException {
         String column_string = String.join(", ", columns);
         String value_string = String.join(", ", Collections.nCopies(values.size(), "?"));
@@ -157,7 +149,7 @@ public class Database {
 
     public static void AddCustomerToDatabase(String name, String address, String zipcode, String phonenum, Division division) throws SQLException {
         String current_date = new Timestamp(new java.util.Date().getTime()).toString();
-        String c_username = current_user.getUsername();
+        String c_username = StateManager.GetCurrentUser().getUsername();
         String division_id = String.valueOf(division.getId());
 
         List<String> columns = Arrays.asList("Customer_Name", "Address", "Postal_Code", "Phone", "Create_Date", "Created_By", "Last_Update", "Last_Updated_By", "Division_ID");
@@ -169,7 +161,7 @@ public class Database {
 
     public static void UpdateExistingCustomer(String name, String address, String zipcode, String phonenum, Division division, int customer_id) throws SQLException {
         String current_date = new Timestamp(new java.util.Date().getTime()).toString();
-        String c_username = current_user.getUsername();
+        String c_username = StateManager.GetCurrentUser().getUsername();
         String division_id = String.valueOf(division.getId());
 
         List<String> columns = Arrays.asList("Customer_Name", "Address", "Postal_Code", "Phone", "Last_Update", "Last_Updated_By", "Division_ID");
@@ -181,8 +173,8 @@ public class Database {
 
     public static void AddAppointmentToDatabase(String title, String desc, String location, String type, String start_time, String end_time, Customer customer, Contact contact) throws SQLException {
         String current_date = new Timestamp(new java.util.Date().getTime()).toString();
-        String c_username = current_user.getUsername();
-        String c_userid = String.valueOf(current_user.getId());
+        String c_username = StateManager.GetCurrentUser().getUsername();
+        String c_userid = String.valueOf(StateManager.GetCurrentUser().getId());
         String customer_id = String.valueOf(customer.getId());
         String contact_id = String.valueOf(contact.getId());
 
@@ -195,8 +187,8 @@ public class Database {
 
     public static void UpdateExistingAppointment(String title, String desc, String location, String type, String start_time, String end_time, Customer customer, Contact contact, int appt_id) throws SQLException {
         String current_date = new Timestamp(new java.util.Date().getTime()).toString();
-        String c_username = current_user.getUsername();
-        String c_userid = String.valueOf(current_user.getId());
+        String c_username = StateManager.GetCurrentUser().getUsername();
+        String c_userid = String.valueOf(StateManager.GetCurrentUser().getId());
         String customer_id = String.valueOf(customer.getId());
         String contact_id = String.valueOf(contact.getId());
 
@@ -230,23 +222,4 @@ public class Database {
         return true;
     }
 
-    public static void SetCustomerForEditing(Customer customer) {
-        customer_to_edit = customer;
-    }
-
-    public static Customer RetrieveCustomerAndClear() {
-        Customer return_value = customer_to_edit;
-        customer_to_edit = null;
-        return return_value;
-    }
-
-    public static void SetAppointmentForEditing(Appointment appointment) {
-        appointment_to_edit = appointment;
-    }
-
-    public static Appointment RetrieveAppointmentAndClear() {
-        Appointment return_value = appointment_to_edit;
-        appointment_to_edit = null;
-        return return_value;
-    }
 }

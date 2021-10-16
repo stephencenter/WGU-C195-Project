@@ -41,7 +41,7 @@ public class AddAppointmentController {
         timezone_label.setText("Your timezone is " + TimeZone.getDefault().getDisplayName(Locale.getDefault()));
         CreateComboBoxes();
 
-        appointment_to_edit = Database.RetrieveAppointmentAndClear();
+        appointment_to_edit = StateManager.RetrieveStoredAppointment();
         if (appointment_to_edit != null) {
             add_or_modify_label.setText("Modify an appointment");
             FillOutPreexistingInfo();

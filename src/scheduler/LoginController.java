@@ -136,7 +136,7 @@ public class LoginController {
             return;
         }
 
-        Database.SetCurrentUser(the_user);
+        StateManager.SetCurrentUser(the_user);
         Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
     }
 

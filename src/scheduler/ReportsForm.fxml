@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -36,9 +37,8 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <ListView layoutX="38.0" layoutY="45.0" prefHeight="239.0" prefWidth="523.0" />
                   <Label layoutX="38.0" layoutY="21.0" text="Select a contact then click &quot;view schedule&quot;" />
-                  <Button layoutX="38.0" layoutY="305.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="140.0" text="View Schedule">
+                  <Button layoutX="38.0" layoutY="305.0" mnemonicParsing="false" onAction="#ViewContactSchedule" prefHeight="50.0" prefWidth="140.0" text="View Schedule">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -53,6 +53,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <TableView fx:id="contact_table" layoutX="38.0" layoutY="49.0" prefHeight="239.0" prefWidth="521.0" />
                </children>
             </AnchorPane>
       </content>
