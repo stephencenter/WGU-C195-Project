@@ -1,5 +1,8 @@
 package scheduler;
 
+/**
+ * This class corresponds to the objects stored in the contacts table of the database
+ */
 public class Contact {
     private final int id;
     private final String name;

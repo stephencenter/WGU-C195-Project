@@ -1,5 +1,8 @@
 package scheduler;
 
+/**
+ * This class corresponds to the objects stored in the divisions table of the database
+ */
 public class Division {
     private final int id;
     private final String name;

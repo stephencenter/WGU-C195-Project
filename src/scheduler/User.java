@@ -1,5 +1,8 @@
 package scheduler;
 
+/**
+ * This class corresponds to the objects stored in the users table of the database
+ */
 public class User {
     private final int id;
     private final String username;

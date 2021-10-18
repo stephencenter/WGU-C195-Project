@@ -177,24 +177,7 @@ public class AddCustomerController {
         // and we alert the user of the errors
         List<String> error_list = GetFormErrors(name, address, zipcode, phonenum, division);
         if (!error_list.isEmpty()) {
-            error_label.setVisible(true);
-            error_label.setText(error_list.get(0));
-
-            // The secondary label says how many additional errors there were
-            error_count_label.setVisible(true);
-            if (error_list.size() > 2) {
-                error_count_label.setText(String.format("%s more problems found", error_list.size() - 1));
-            }
-
-            // If there are only two errors, then the secondary label will instead display the second error
-            else if (error_list.size() == 2) {
-                error_count_label.setText(error_list.get(1));
-            }
-
-            // If there was only one error then we set the label to be invisible
-            else {
-                error_count_label.setVisible(false);
-            }
+            DisplayErrors(error_list);
 
             return;
         }
@@ -262,6 +245,31 @@ public class AddCustomerController {
         }
 
         return list_of_errors;
+    }
+
+    /**
+     * This method takes a list of all errors that occured and shows them to the user
+     * @param error_list a list of every error that occurred
+     */
+    public void DisplayErrors(List<String> error_list) {
+        error_label.setVisible(true);
+        error_label.setText(error_list.get(0));
+
+        // The secondary label says how many additional errors there were
+        error_count_label.setVisible(true);
+        if (error_list.size() > 2) {
+            error_count_label.setText(String.format("%s more problems found", error_list.size() - 1));
+        }
+
+        // If there are only two errors, then the secondary label will instead display the second error
+        else if (error_list.size() == 2) {
+            error_count_label.setText(error_list.get(1));
+        }
+
+        // If there was only one error then we set the label to be invisible
+        else {
+            error_count_label.setVisible(false);
+        }
     }
 
     /**

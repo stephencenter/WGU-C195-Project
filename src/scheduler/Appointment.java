@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 
+/**
+ * This class corresponds to the objects stored in the appointments table of the database
+ */
 public class Appointment {
     private final int id;
     private final String title;
@@ -43,6 +46,12 @@ public class Appointment {
     public int getUserId() { return user_id; }
     public int getContactId() { return contact_id; }
 
+    /**
+     * This method searches through all the contacts to find the one with the matching contact id,
+     * then returns that contact's name
+     * @return the name of this appointment's contact
+     * @throws SQLException could be thrown when retrieving the list from the database
+     */
     public String getContactName() throws SQLException {
         ObservableList<Contact> contact_list = Database.GetContactList();
         for (Contact contact : contact_list) {
@@ -53,10 +62,16 @@ public class Appointment {
         return null;
     }
 
+    /**
+     * @return a human readable string version of the start_time, formatted to the user's timezone
+     */
     public String getStartTimeLocal() {
         return Database.FormatDateToTimezone(start_time);
     }
 
+    /**
+     * @return a human readable string version of the end_time, formatted to the user's timezone
+     */
     public String getEndTimeLocal() {
         return Database.FormatDateToTimezone(end_time);
     }

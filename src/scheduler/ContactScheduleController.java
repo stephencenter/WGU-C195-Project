@@ -14,18 +14,34 @@ import java.text.ParseException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This method is attached to the ContactScheduleForm. Its methods are called when the
+ * user interacts with that form. It's responsible for creating and displaying the
+ * appointment table for the contact chosen on the Reports form
+ */
 public class ContactScheduleController {
     @FXML Label contact_name_label;
     @FXML TableView<Appointment> appointment_table;
 
     Contact the_contact;
 
+    /**
+     * This method is called when the form is loaded. It retrieves the stored contact and
+     * creates the appointment table
+     * @throws SQLException could be thrown when retrieving the appointments for the table
+     * @throws ParseException could be thrown when parsing the dates for the appointment
+     */
     public void initialize() throws SQLException, ParseException {
         the_contact = StateManager.RetrieveStoredContact();
         contact_name_label.setText(String.format("%s's appointments", the_contact.getName()));
         CreateAppointmentTable();
     }
 
+    /**
+     * This method creates and populates the appointment table
+     * @throws SQLException could be thrown when retrieving the appointments for the table
+     * @throws ParseException could be thrown when parsing the dates for the appointment
+     */
     public void CreateAppointmentTable() throws SQLException, ParseException {
         TableColumn<Appointment, Integer> id_column = new TableColumn<>("ID");
         id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -72,14 +88,30 @@ public class ContactScheduleController {
         appointment_table.setItems(appt_stream.collect(Collectors.toCollection(FXCollections::observableArrayList)));
     }
 
+    /**
+     * This method is called when hitting the return button. It switches the current form to the Reports form
+     * @param event a JavaFX event
+     * @throws IOException could be thrown when loading the form
+     */
     public void SwitchToReportsForm(Event event) throws IOException {
         Main.LoadForm(getClass().getResource("ReportsForm.fxml"), event, "Main Menu");
     }
 
+    /**
+     * This method is called when hitting the main menu button. It switches the current form to the Main Menu form
+     * @param event a JavaFX event
+     * @throws IOException could be thrown when loading the form
+     */
     public void SwitchToMainMenuForm(Event event) throws IOException {
         Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
     }
 
+    /**
+     * This method is called when clicking logout. It sets the current user to null and switches
+     * to the login form
+     * @param event a JavaFX event
+     * @throws IOException could be thrown when loading the form
+     */
     public void Logout(Event event) throws IOException {
         StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");
