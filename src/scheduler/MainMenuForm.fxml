@@ -12,29 +12,29 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <Button layoutX="160.0" layoutY="130.0" mnemonicParsing="false" onAction="#SwitchToCustomerTableForm" prefHeight="48.0" prefWidth="110.0" text="Customers">
+      <Button layoutX="166.0" layoutY="130.0" mnemonicParsing="false" onAction="#SwitchToCustomerTableForm" prefHeight="48.0" prefWidth="110.0" text="Customers">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Button layoutX="287.0" layoutY="130.0" mnemonicParsing="false" onAction="#SwitchToReportsForm" prefHeight="48.0" prefWidth="110.0" text="Reports">
+      <Button layoutX="294.0" layoutY="130.0" mnemonicParsing="false" onAction="#SwitchToReportsForm" prefHeight="48.0" prefWidth="110.0" text="Reports">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Button layoutX="413.0" layoutY="130.0" mnemonicParsing="false" onAction="#Logout" prefHeight="48.0" prefWidth="110.0" text="Logout">
+      <Button layoutX="423.0" layoutY="130.0" mnemonicParsing="false" onAction="#Logout" prefHeight="48.0" prefWidth="110.0" text="Logout">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Label layoutX="33.0" layoutY="32.0" text="Scheduling Software v1.0">
+      <Label layoutX="74.0" layoutY="32.0" prefHeight="31.0" prefWidth="421.0" text="Stephen Center's Scheduling Application v1.0">
          <font>
             <Font size="21.0" />
          </font>
       </Label>
-      <Label layoutX="33.0" layoutY="63.0" text="Select an option">
+      <Label layoutX="220.0" layoutY="78.0" text="Select an option">
          <font>
-            <Font size="21.0" />
+            <Font size="18.0" />
          </font>
       </Label>
    </children>

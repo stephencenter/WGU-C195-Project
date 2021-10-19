@@ -203,7 +203,7 @@ public class Database {
      * @return a human-readable string equivalent of the Timestamp
      */
     public static String FormatDateToTimezone(Timestamp timestamp) {
-        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd 'at' h:mm a");//"yyyy-MM-dd hh:mm:ss aa");
+        SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd 'at' h:mm a");
         int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
         return date_format.format(new Timestamp(timestamp.getTime() + timezone_offset));
     }
