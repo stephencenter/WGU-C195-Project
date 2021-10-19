@@ -63,14 +63,16 @@ public class Appointment {
     }
 
     /**
-     * @return a human readable string version of the start_time, formatted to the user's timezone
+     * This method returns a human readable string version of the start_time formatted to the user's timezone
+     * @return a human readable start_time
      */
     public String getStartTimeLocal() {
         return Database.FormatDateToTimezone(start_time);
     }
 
     /**
-     * @return a human readable string version of the end_time, formatted to the user's timezone
+     * This method returns a human readable string version of the end_time formatted to the user's timezone
+     * @return a human readable end_time
      */
     public String getEndTimeLocal() {
         return Database.FormatDateToTimezone(end_time);

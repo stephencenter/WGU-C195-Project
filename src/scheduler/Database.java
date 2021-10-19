@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * The Database class is resposible for interfacing with the MySQL database.
+ * This class is resposible for interfacing with the MySQL database.
  * Its methods retrieve, modify, and add data from the database.
  */
 public class Database {
@@ -21,6 +21,7 @@ public class Database {
 
     /**
      * This method initiates a connection to the database so we can interact with it
+     * @throws SQLException could be thrown when initiating the connection
      */
     public static void ConnectToDatabase() throws SQLException {
         db_connection = DriverManager.getConnection(db_url + db_name, db_username, db_password);
@@ -46,7 +47,7 @@ public class Database {
     }
 
     /**
-     * Queries the customer table for a list of all customers
+     * This method queries the customer table for a list of all customers
      * @return a list of every customer in the database
      * @throws SQLException Interacting with the database could throw a SQLException
      */
@@ -62,7 +63,7 @@ public class Database {
     }
 
     /**
-     * Queries the division table for a list of all divisions
+     * This method queries the division table for a list of all divisions
      * @return a list of every division in the database
      * @throws SQLException Interacting with the database could throw a SQLException
      */
@@ -78,7 +79,7 @@ public class Database {
     }
 
     /**
-     * Queries the country table for a list of all countries
+     * This method queries the country table for a list of all countries
      * @return a list of every country in the database
      * @throws SQLException Interacting with the database could throw a SQLException
      */
@@ -94,7 +95,7 @@ public class Database {
     }
 
     /**
-     * Queries the contact table for a list of all contacts
+     * This method queries the contact table for a list of all contacts
      * @return a list of every contact in the database
      * @throws SQLException Interacting with the database could throw a SQLException
      */
@@ -110,7 +111,7 @@ public class Database {
     }
 
     /**
-     * Queries the appointment table for a list of all appointments
+     * This method queries the appointment table for a list of all appointments
      * @return a list of every customer in the database
      * @throws SQLException Interacting with the database could throw a SQLException
      * @throws ParseException Parsing the appointment dates could throw a ParseException
@@ -332,7 +333,7 @@ public class Database {
     }
 
     /**
-     * Deletes the specified customer from the database
+     * This method deletes the specified customer from the database
      * @param id the ID of the customer to be deleted
      * @return true if the deletion succeeded, false otherwise
      */
@@ -349,7 +350,7 @@ public class Database {
     }
 
     /**
-     * Deletes the specified appointment from the database
+     * This method deletes the specified appointment from the database
      * @param id the ID of the appointment to be deleted
      * @return true if the deletion succeeded, false otherwise
      */
@@ -364,5 +365,4 @@ public class Database {
 
         return true;
     }
-
 }

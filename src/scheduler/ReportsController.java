@@ -18,6 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is attached to the ReportsForm. Its methods are called when the user interacts with that form.
+ * It is responsible for generating and displaying the reports to the user.
+ */
 public class ReportsController {
     @FXML ListView<String> appt_type_list;
     @FXML ListView<String> appt_month_list;

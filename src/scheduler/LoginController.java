@@ -44,7 +44,7 @@ public class LoginController {
     }
 
     /**
-     * Take the provided localization dictionary and use it to translate all the UI text
+     * This method takes the provided localization dictionary and use it to translate all the UI text
      * @param localization A dictionary containing translations for all the UI elements
      * @param locale The user's locale
      */
@@ -116,7 +116,7 @@ public class LoginController {
     }
 
     /**
-     * This function is called when the login button is pressed. It attempts to log the user into
+     * This method is called when the login button is pressed. It attempts to log the user into
      * the application so they can interact with the database. It also logs all attempts to a file.
      * If the login attempt is successful it proceeds to the application
      * @param event a JavaFX event

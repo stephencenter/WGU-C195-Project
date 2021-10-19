@@ -17,6 +17,11 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+/**
+ * This class is attached to the AppointmentTableForm. Its methods are called when
+ * the user interacts with that form. It is responsible for creating and displaying
+ * the appointment table and enabling the user to add, modify and delete appointments
+ */
 public class AppointmentTableController {
     @FXML TableView<Appointment> appointment_table;
     @FXML Label appointment_delete_message;
@@ -26,12 +31,22 @@ public class AppointmentTableController {
     @FXML Label upcoming_appt_label;
     boolean appointment_confirm_delete = false;
 
+    /**
+     * This method is called when the form loads. It is responsible for creating
+     * and populating the appointment table
+     * @throws SQLException could be thrown when retrieving the appointment list from the database
+     * @throws ParseException could be thrown when retrieving the appointment list from the database
+     */
     public void initialize() throws SQLException, ParseException {
         CreateAppointmentTable();
         PopulateAppointmentTable();
+        AlertOfUpcomingAppointments();
     }
 
-    public void CreateAppointmentTable() throws SQLException, ParseException {
+    /**
+     * This method creates the columns for the appointment table
+     */
+    public void CreateAppointmentTable() {
         TableColumn<Appointment, Integer> id_column = new TableColumn<>("ID");
         id_column.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -72,10 +87,14 @@ public class AppointmentTableController {
         appointment_table.getColumns().add(end_column);
         appointment_table.getColumns().add(customerid_column);
         appointment_table.getColumns().add(userid_column);
-
-        AlertOfUpcomingAppointments();
     }
 
+    /**
+     * This method populates the appointment table with our list of appointments from the database.
+     * Depending on which radio button is selected, we will filter this list in different ways
+     * @throws SQLException could be thrown when retrieving the appointment list from the database
+     * @throws ParseException could be thrown when retrieving the appointment list from the database
+     */
     public void PopulateAppointmentTable() throws SQLException, ParseException {
         ObservableList<Appointment> appointment_list = Database.GetAppointmentList();
         ObservableList<Appointment> filtered_list = FXCollections.observableArrayList();
@@ -109,6 +128,12 @@ public class AppointmentTableController {
         appointment_table.setPlaceholder(new Label("Database has no appointments"));
     }
 
+    /**
+     * This method checks the list of appointments for any that starts less than 15 minutes in the future.
+     * If it finds one then it will alert the user
+     * @throws SQLException could be thrown when retrieving the appointment list from the database
+     * @throws ParseException could be thrown when retrieving the appointment list from the database
+     */
     public void AlertOfUpcomingAppointments() throws SQLException, ParseException {
         upcoming_appt_label.setVisible(true);
 
@@ -131,6 +156,14 @@ public class AppointmentTableController {
         upcoming_appt_label.setText("There are no upcoming appointments");
     }
 
+    /**
+     * This method deletes the currently selected appointment from the database.
+     * This requires two clicks, one to initiate deletion and another to confirm. This is to
+     * prevent accidental deletions. Clicking away from the currently selected appointment will
+     * reset this two click requirement.
+     * @throws SQLException could be thrown when retrieving the appointment list from the database
+     * @throws ParseException could be thrown when retrieving the appointment list from the database
+     */
     public void DeleteSelectedAppointment() throws SQLException, ParseException {
         Appointment selected_appointment = appointment_table.getSelectionModel().getSelectedItem();
         appointment_delete_message.setVisible(true);
@@ -162,10 +195,24 @@ public class AppointmentTableController {
         PopulateAppointmentTable();
     }
 
+    /**
+     * This method is called when hitting the add button. It switches the current form
+     * to the AddAppointmentForm so the user can add a new appointment to the database
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
     public void SwitchToAddAppointmentForm(Event event) throws IOException {
         Main.LoadForm(getClass().getResource("AddAppointmentForm.fxml"), event, "Add an Appointment");
     }
 
+    /**
+     * This method is called when the modify button is pressed. It switches the current form
+     * to the AddAppointmentForm with a flag set that tells the form to pre-fill out the textfields and
+     * comboboxes with the selected appointment's information. It also tells the form to update the appointment
+     * in the database instead of creating a new appointment
+     * @param event a JavaFX event
+     * @throws IOException Attempting to laod the new form could raise an IOException
+     */
     public void SwitchToModifyAppointmentForm(Event event) throws IOException {
         Appointment selected_appointment = appointment_table.getSelectionModel().getSelectedItem();
         appointment_delete_message.setVisible(true);
@@ -180,10 +227,21 @@ public class AppointmentTableController {
         Main.LoadForm(getClass().getResource("AddAppointmentForm.fxml"), event, "Modify an Appointment");
     }
 
+    /**
+     * This method is called when hitting the main menu button. It switches the current form to the Main Menu form
+     * @param event a JavaFX event
+     * @throws IOException could be thrown when loading the form
+     */
     public void SwitchToMainMenuForm(Event event) throws IOException {
         Main.LoadForm(getClass().getResource("MainMenuForm.fxml"), event, "Main Menu");
     }
 
+    /**
+     * This method is called when clicking logout. It sets the current user to null and switches
+     * to the login form
+     * @param event a JavaFX event
+     * @throws IOException could be thrown when loading the form
+     */
     public void Logout(Event event) throws IOException {
         StateManager.SetCurrentUser(null);
         Main.LoadForm(getClass().getResource("LoginForm.fxml"), event, "Login to Database");

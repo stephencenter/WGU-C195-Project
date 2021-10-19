@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This method is attached to the ContactScheduleForm. Its methods are called when the
+ * This class is attached to the ContactScheduleForm. Its methods are called when the
  * user interacts with that form. It's responsible for creating and displaying the
  * appointment table for the contact chosen on the Reports form
  */

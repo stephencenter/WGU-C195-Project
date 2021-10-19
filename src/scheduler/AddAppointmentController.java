@@ -347,6 +347,12 @@ public class AddAppointmentController {
      * fit the requirements. Specifically, an appointment must take place in the future, must start
      * before it ends, must fall within business hours, and cannot overlap with another appointment
      * for the same customer
+     *
+     * LAMBDA EXPLANATION: In this method I used a lambda expression to define a function object.
+     * This function accepts a timestamp object and utilizes SimpleDateFormat to retrieve and return the
+     * hour value of the timestamp as an integer. This allows us to check whether the timestamp falls within business
+     * hours.
+     *
      * @param start_timestamp the time the appointment is set to start (UTC)
      * @param end_timestamp the time the appointment is set to end (UTC)
      * @param current_timestamp the current time (UTC)
@@ -366,6 +372,7 @@ public class AddAppointmentController {
             error_list.add("Start time cannot be after end time");
         }
 
+        // We create a lambda function that accepts a timestamp and returns the hour value of that timestamp
         Function<Timestamp, Integer> get_hours = (c) -> Integer.parseInt(new SimpleDateFormat("HH").format(c));
         if (get_hours.apply(start_timestamp) > 2 && get_hours.apply(start_timestamp) < 12) {
             error_list.add("The appointment must fall within business hours");
