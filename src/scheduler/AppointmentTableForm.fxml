@@ -46,9 +46,5 @@
       </RadioButton>
       <RadioButton fx:id="month_radio" layoutX="473.0" layoutY="40.0" mnemonicParsing="false" onAction="#PopulateAppointmentTable" text="Current Month" toggleGroup="$appt_filter" />
       <RadioButton fx:id="week_radio" layoutX="603.0" layoutY="40.0" mnemonicParsing="false" onAction="#PopulateAppointmentTable" text="Current Week" toggleGroup="$appt_filter" />
-      <Label fx:id="upcoming_appt_label" layoutX="326.0" layoutY="476.0" prefHeight="17.0" prefWidth="444.0" text="Appointment alert label" visible="false">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font></Label>
    </children>
 </Pane>

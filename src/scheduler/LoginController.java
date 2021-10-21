@@ -129,7 +129,7 @@ public class LoginController {
         User the_user = Database.GetUserWithLoginInfo(username, password);
 
         // If user != null, that means the login attempt was successful
-        RecordLoginAttempt(the_user != null);
+        RecordLoginAttempt(the_user != null, username);
 
         if (the_user == null) {
             error_label.setVisible(true);
@@ -144,18 +144,19 @@ public class LoginController {
      * This method records all login attempts, including the time and date and whether they were successful.
      * This information is stored in a file called login_activity.txt
      * @param successful whether or not the login attempt was successful
+     * @param username the username entered into the login form (could be blank)
      * @throws IOException attempting to write to the file could throw an IOException
      */
-    public void RecordLoginAttempt(boolean successful) throws IOException {
+    public void RecordLoginAttempt(boolean successful, String username) throws IOException {
         String log_message;
         Timestamp date = new Timestamp(System.currentTimeMillis());
         SimpleDateFormat date_sdf = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat time_sdf = new SimpleDateFormat("hh:mm:ss a");
 
         if (successful) {
-            log_message = String.format("Successful login attempt on %s at %s\n", date_sdf.format(date), time_sdf.format(date));
+            log_message = String.format("Successful login attempt on %s at %s with username '%s'\n", date_sdf.format(date), time_sdf.format(date), username);
         } else {
-            log_message = String.format("Unsuccessful login attempt on %s at %s\n", date_sdf.format(date), time_sdf.format(date));
+            log_message = String.format("Unsuccessful login attempt on %s at %s with username '%s'\n", date_sdf.format(date), time_sdf.format(date), username);
         }
 
         boolean does_file_exist = new File("login_activity.txt").createNewFile();

@@ -24,7 +24,6 @@ import java.util.TimeZone;
  */
 public class ReportsController {
     @FXML ListView<String> appt_type_list;
-    @FXML ListView<String> appt_month_list;
     @FXML TableView<Contact> contact_table;
     @FXML Label past_appt_label;
     @FXML Label future_appt_label;
@@ -43,34 +42,23 @@ public class ReportsController {
     }
 
     /**
-     * This method generates the report on the number of appointments by each type and month
+     * This method generates the report on the number of appointments type and month
      * @throws SQLException could be thrown when retrieving the appointment list
      * @throws ParseException could be thrown when retrieving the appointment list
      */
     public void AppointmentsByTypeMonth() throws SQLException, ParseException {
         Map<String, Integer> type_count = new HashMap<>();
-        Map<String, Integer> month_count = new HashMap<>();
 
         for (Appointment appt : Database.GetAppointmentList()) {
-            String type_key = appt.getAppointmentType();
-
-            if (type_count.containsKey(type_key)) {
-                type_count.put(type_key, type_count.get(type_key) + 1);
-            }
-
-            else {
-                type_count.put(type_key, 1);
-            }
-
             SimpleDateFormat get_month = new SimpleDateFormat("MMMM");
-            String month_key = get_month.format(appt.getStartTime());
+            String dict_key = String.format("%s %s", get_month.format(appt.getStartTime()), appt.getAppointmentType());
 
-            if (month_count.containsKey(month_key)) {
-                month_count.put(month_key, month_count.get(month_key) + 1);
+            if (type_count.containsKey(dict_key)) {
+                type_count.put(dict_key, type_count.get(dict_key) + 1);
             }
 
             else {
-                month_count.put(month_key, 1);
+                type_count.put(dict_key, 1);
             }
         }
 
@@ -79,12 +67,6 @@ public class ReportsController {
             type_strings.add(String.format("(%s)    %s", type_count.get(key), key));
         }
         appt_type_list.setItems(type_strings);
-
-        ObservableList<String> month_strings = FXCollections.observableArrayList();
-        for (String key : month_count.keySet()) {
-            month_strings.add(String.format("(%s)    %s", month_count.get(key), key));
-        }
-        appt_month_list.setItems(month_strings);
     }
 
     /**

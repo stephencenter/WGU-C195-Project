@@ -3,7 +3,8 @@ Scheduler v1.0 by Stephen Center
 Date: 10/19/2021
 IDE: IntelliJ IDEA 2021.1.1
 JDK: Java 11.0.11
-JavaFX: JavaFX 11.0.2
+JavaFX: javafx-sdk11.0.2
+MYSQL: mysql-connector-java-8.0.25
 
 The purpose of the application is to assist with managing schedules for 
 appointments. It allows the user to view, add, delete, and modify both customers

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * This class is attached to the AppointmentTableForm. Its methods are called when
@@ -28,7 +27,6 @@ public class AppointmentTableController {
     @FXML RadioButton unfiltered_radio;
     @FXML RadioButton month_radio;
     @FXML RadioButton week_radio;
-    @FXML Label upcoming_appt_label;
     boolean appointment_confirm_delete = false;
 
     /**
@@ -40,7 +38,6 @@ public class AppointmentTableController {
     public void initialize() throws SQLException, ParseException {
         CreateAppointmentTable();
         PopulateAppointmentTable();
-        AlertOfUpcomingAppointments();
     }
 
     /**
@@ -129,34 +126,6 @@ public class AppointmentTableController {
     }
 
     /**
-     * This method checks the list of appointments for any that starts less than 15 minutes in the future.
-     * If it finds one then it will alert the user
-     * @throws SQLException could be thrown when retrieving the appointment list from the database
-     * @throws ParseException could be thrown when retrieving the appointment list from the database
-     */
-    public void AlertOfUpcomingAppointments() throws SQLException, ParseException {
-        upcoming_appt_label.setVisible(true);
-
-        long current_time = System.currentTimeMillis();
-        int fifteen_minutes = 900000;
-        int timezone_offset = TimeZone.getDefault().getOffset(System.currentTimeMillis());
-
-        for (Appointment appt : Database.GetAppointmentList()) {
-            // I have NO IDEA why I have to add a timezone offset to convert back to UTC.
-            // My dates are stored as UTC and look correct in the database, and Timestamp.getTime() says
-            // that it returns milliseconds in UTC time, but for some reason it doesn't work
-            long time_diff = appt.getStartTime().getTime() - current_time + timezone_offset;
-
-            if (time_diff > 0 && time_diff < fifteen_minutes) {
-                upcoming_appt_label.setText(String.format("Upcoming appointment ID #%s on %s", appt.getId(), appt.getStartTimeLocal()));
-                return;
-            }
-        }
-
-        upcoming_appt_label.setText("There are no upcoming appointments");
-    }
-
-    /**
      * This method deletes the currently selected appointment from the database.
      * This requires two clicks, one to initiate deletion and another to confirm. This is to
      * prevent accidental deletions. Clicking away from the currently selected appointment will
@@ -174,15 +143,17 @@ public class AppointmentTableController {
             return;
         }
 
+        int appt_id = selected_appointment.getId();
         if (!appointment_confirm_delete) {
             appointment_confirm_delete = true;
-            appointment_delete_message.setText("Click again to confirm appointment deletion");
+            appointment_delete_message.setText(String.format("Click again to confirm deletion of appointment #%s", appt_id));
             appointment_delete_message.setTextFill(Color.web("#000000"));
             return;
         }
 
+        String appt_type = selected_appointment.getAppointmentType();
         if (Database.DeleteAppointmentWithID(selected_appointment.getId())) {
-            appointment_delete_message.setText("Appointment deleted sucessfully!");
+            appointment_delete_message.setText(String.format("Deleted appointment #%s of type '%s'", appt_id, appt_type));
             appointment_delete_message.setTextFill(Color.web("#000000"));
         }
 

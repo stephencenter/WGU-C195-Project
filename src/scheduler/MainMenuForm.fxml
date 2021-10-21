@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="210.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduler.MainMenuController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="239.0" prefWidth="569.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scheduler.MainMenuController">
    <children>
       <Button layoutX="33.0" layoutY="130.0" mnemonicParsing="false" onAction="#SwitchToAppointmentTableForm" prefHeight="48.0" prefWidth="110.0" text="Appointments">
          <font>
@@ -35,6 +35,11 @@
       <Label layoutX="220.0" layoutY="78.0" text="Select an option">
          <font>
             <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="upcoming_appt_label" layoutX="33.0" layoutY="205.0" prefHeight="17.0" prefWidth="444.0" text="Appointment alert label">
+         <font>
+            <Font name="System Bold" size="14.0" />
          </font>
       </Label>
    </children>
